@@ -212,6 +212,10 @@
         #updateBanner .ub-x { border:0; background:transparent; color:#7C4A03; width:40px; height:40px; border-radius:10px; }
         .sw-status { font-size:.85rem; border-radius:10px; padding:8px 10px; line-height:1.4; }
         .sw-status.ok { background:#DCFCE7; color:#166534; } .sw-status.warn { background:#FEF3C7; color:#7C4A03; } .sw-status.wait { background:#EEF2F8; color:var(--nl-muted); }
+        #inAppBanner { align-items:center; gap:8px; background:#FEE2E2; color:#7F1D1D; border-bottom:1px solid #F3B4B4; padding:10px 12px; font-size:.85rem; line-height:1.4; flex-wrap:wrap; }
+        #inAppBanner .ia-txt { flex:1 1 220px; }
+        #inAppBanner .ia-go { border:0; background:#7F1D1D; color:#fff; border-radius:10px; min-height:38px; padding:0 12px; font-weight:600; }
+        #inAppBanner .ub-x { border:0; background:transparent; color:#7F1D1D; width:38px; height:38px; }
         @media print { .app-bar, #bottomNav, .action-bar { display:none !important; } }
         @media print {
             @page { size: A4; margin: 2cm 2cm 2cm 3cm; }
@@ -228,6 +232,7 @@
     <div class="ab-text"><div class="ab-title" id="abTitle">NL Office</div><div class="ab-sub" id="abSub">Ngọc Long Solar</div></div>
 </header>
 
+<div id="inAppBanner" class="no-print" style="display:none;"><span class="ia-txt"></span><button type="button" class="ia-go" onclick="copyAppLink()">Sao chép liên kết</button><button type="button" class="ub-x" onclick="this.parentNode.style.display='none'" aria-label="Đóng"><i class="fa-solid fa-xmark"></i></button></div>
 <div class="container survey-container" id="appMain">
     <div id="tab-home" class="tab-pane no-print">
         <div class="home-h">Lập phiếu</div>
@@ -1795,75 +1800,101 @@
         return parts.join('_') + '.' + ext;
     }
 
-    function exportToPDF() {
-        const m = getMargins();
-        const title = buildFileName('pdf').replace(/\.pdf$/, '');
-
-        // CSS @page điều khiển khổ giấy & lề; page-break điều khiển ngắt trang (phụ lục mỗi ảnh 1 trang)
-        const printCss = `
-            @page { size: A4; margin: ${m.top}mm ${m.right}mm ${m.bottom}mm ${m.left}mm; }
-            html, body { margin: 0; padding: 0; }
-            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .rpt-body { padding: 0 !important; }
-            .pdf-appendix-photo { page-break-before: always; break-before: page; page-break-inside: avoid; }
-            .pdf-block { page-break-inside: avoid; }
-            img { max-width: 100%; }
-        `;
-
-        const html = `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8">
-            <title>${title}</title>
-            <link href="https://fonts.googleapis.com/css2?family=Tinos:wght@400;700&display=swap" rel="stylesheet">
-            <style>${printCss}</style>
-            </head><body>${getReportHTML()}</body></html>`;
-
-        // iframe ẩn: in đúng nội dung báo cáo mà không rời khỏi ứng dụng, giữ nguyên form đang nhập
+    // ===== Xuất PDF qua hộp thoại In của thiết bị (dùng chung mọi phiếu) =====
+    // Sửa lỗi cũ: hàm in bị gọi 2 lần (khi ảnh tải xong và lại lần nữa sau 5 giây) khiến 5 giây sau hiện thông báo lỗi
+    // "Không mở được hộp thoại In...", và iframe bị gỡ sau 1 giây có thể làm bản in trống trên điện thoại.
+    let _printFrame = null, _printFrameTimer = null, _printTitleTimer = null, _printOrigTitle = null;
+    function cleanupPrintFrame() {
+        clearTimeout(_printFrameTimer); clearTimeout(_printTitleTimer);
+        if (_printFrame && _printFrame.parentNode) _printFrame.parentNode.removeChild(_printFrame);
+        _printFrame = null;
+        if (_printOrigTitle !== null) { document.title = _printOrigTitle; _printOrigTitle = null; }
+    }
+    function inAppBrowserName() {
+        const ua = navigator.userAgent || '';
+        const m = /(Zalo|FBAN|FBAV|FB_IAB|Instagram|MicroMessenger|Messenger|Line\/|Snapchat|Viber|KAKAOTALK|Twitter)/i.exec(ua);
+        if (!m) return '';
+        const n = m[1].toLowerCase();
+        if (n === 'zalo') return 'Zalo';
+        if (n === 'fban' || n === 'fbav' || n === 'fb_iab' || n === 'messenger') return 'Facebook/Messenger';
+        if (n === 'micromessenger') return 'WeChat';
+        if (n === 'line/') return 'LINE';
+        return m[1];
+    }
+    function copyAppLink() {
+        const url = location.href.split('#')[0];
+        const done = function() { alert('Đã sao chép liên kết. Hãy mở Chrome (Android) hoặc Safari (iPhone), dán vào thanh địa chỉ.'); };
+        try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(done, function() { prompt('Sao chép liên kết này:', url); }); return; } } catch (e) { /* bỏ qua */ }
+        try { prompt('Sao chép liên kết này:', url); } catch (e) { /* bỏ qua */ }
+    }
+    function warnInAppBrowser(kind) {
+        const n = inAppBrowserName();
+        if (!n) return true;
+        return confirm('Bạn đang mở NL Office trong ' + n + '. Trình duyệt trong ứng dụng này thường KHÔNG hỗ trợ xuất ' + kind + '.\n\nNên mở bằng Chrome (Android) hoặc Safari (iPhone): bấm nút ⋯ ở góc màn hình, chọn "Mở bằng trình duyệt".\n\nBấm OK để vẫn thử xuất, hoặc Hủy để dừng.');
+    }
+    function printHtmlViaIframe(html, title) {
+        if (!warnInAppBrowser('PDF')) return;
+        cleanupPrintFrame();
         const iframe = document.createElement('iframe');
-        iframe.style.position = 'fixed';
-        iframe.style.right = '0';
-        iframe.style.bottom = '0';
-        iframe.style.width = '0';
-        iframe.style.height = '0';
-        iframe.style.border = '0';
+        iframe.setAttribute('aria-hidden', 'true'); iframe.tabIndex = -1;
+        // Khung cỡ A4, đặt ngoài màn hình: trình duyệt điện thoại dàn trang đúng (khung 0×0 dễ cho bản in trống)
+        iframe.style.cssText = 'position:fixed;left:-10000px;top:0;width:210mm;height:297mm;border:0;pointer-events:none;';
         document.body.appendChild(iframe);
-
+        _printFrame = iframe;
         const doc = iframe.contentWindow.document;
-        doc.open();
-        doc.write(html);
-        doc.close();
-
-        // Trên nhiều trình duyệt (đặc biệt điện thoại), tên file gợi ý trong hộp thoại
-        // "Lưu thành PDF" lấy theo document.title của TAB TRÌNH DUYỆT chính, không phải
-        // <title> bên trong iframe ẩn — nên phải tạm đổi tiêu đề tab chính trước khi in.
-        const _originalTitle = document.title;
+        doc.open(); doc.write(html); doc.close();
+        // Tên file gợi ý trong hộp thoại "Lưu thành PDF" lấy theo tiêu đề tab chính trên nhiều điện thoại
+        _printOrigTitle = document.title;
         document.title = title;
-
-        // Chờ ảnh (base64) và font tải xong rồi mới gọi hộp thoại In
+        let printed = false;
         const doPrint = function() {
+            if (printed || _printFrame !== iframe || !iframe.contentWindow) return;
+            printed = true;
             try {
                 iframe.contentWindow.focus();
                 iframe.contentWindow.print();
             } catch (err) {
-                alert('Không mở được hộp thoại In: ' + (err && err.message ? err.message : err));
+                alert('Không mở được hộp thoại In: ' + (err && err.message ? err.message : err) + '\n\nHãy thử mở NL Office bằng Chrome (Android) hoặc Safari (iPhone).');
+                cleanupPrintFrame();
+                return;
             }
-            // Dọn iframe và khôi phục tiêu đề tab sau khi hộp thoại in đóng lại
-            setTimeout(function() {
-                if (iframe.parentNode) document.body.removeChild(iframe);
-                document.title = _originalTitle;
-            }, 1000);
+            _printTitleTimer = setTimeout(function() { if (_printOrigTitle !== null) { document.title = _printOrigTitle; _printOrigTitle = null; } }, 6000);
+            // Giữ khung in thêm 2 phút: trên điện thoại hộp thoại In dựng bản xem trước không đồng bộ, gỡ sớm sẽ ra trang trống
+            _printFrameTimer = setTimeout(cleanupPrintFrame, 120000);
         };
-
         const imgs = Array.from(doc.images || []);
-        let pending = imgs.filter(im => !(im.complete && im.naturalWidth > 0)).length;
-        if (pending === 0) {
-            setTimeout(doPrint, 300); // vẫn chờ chút cho font
-        } else {
-            imgs.forEach(im => {
+        let pending = imgs.filter(function(im) { return !(im.complete && im.naturalWidth > 0); }).length;
+        let fallbackTimer = null;
+        const go = function() { clearTimeout(fallbackTimer); setTimeout(doPrint, 300); };
+        if (pending === 0) { go(); }
+        else {
+            imgs.forEach(function(im) {
                 if (im.complete && im.naturalWidth > 0) return;
-                im.onload = im.onerror = function() { if (--pending <= 0) setTimeout(doPrint, 300); };
+                im.onload = im.onerror = function() { if (--pending <= 0) go(); };
             });
-            // Phòng khi có ảnh treo, vẫn in sau tối đa 5 giây
-            setTimeout(doPrint, 5000);
+            fallbackTimer = setTimeout(doPrint, 5000);   // phòng khi có ảnh treo: vẫn in sau tối đa 5 giây
         }
+    }
+    function exportToPDF() {
+        const m = getMargins();
+        const title = buildFileName('pdf').replace(/\.pdf$/, '');
+        const printCss = '@page { size: A4; margin: ' + m.top + 'mm ' + m.right + 'mm ' + m.bottom + 'mm ' + m.left + 'mm; }' +
+            ' html, body { margin: 0; padding: 0; } body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+            ' .rpt-body { padding: 0 !important; } .pdf-appendix-photo { page-break-before: always; break-before: page; page-break-inside: avoid; }' +
+            ' .pdf-block { page-break-inside: avoid; } img { max-width: 100%; }';
+        const html = '<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><title>' + escapeHTML(title) + '</title>' +
+            '<link href="https://fonts.googleapis.com/css2?family=Tinos:wght@400;700&display=swap" rel="stylesheet">' +
+            '<style>' + printCss + '</style></head><body>' + getReportHTML() + '</body></html>';
+        printHtmlViaIframe(html, title);
+    }
+    function exportTabToPDF(tabKey) {
+        const title = buildTabFileName(tabKey, 'pdf').replace(/\.pdf$/, '');
+        const m = getMargins();
+        const html = '<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><title>' + escapeHTML(title) + '</title>' +
+            '<link href="https://fonts.googleapis.com/css2?family=Tinos:wght@400;700&display=swap" rel="stylesheet">' +
+            '<style>@page{size:A4;margin:' + m.top + 'mm ' + m.right + 'mm ' + m.bottom + 'mm ' + m.left + 'mm;}' +
+            'html,body{margin:0;padding:0;}img{max-width:100%;}</style></head><body>' + buildTabReportHTML(tabKey) + '</body></html>';
+        printHtmlViaIframe(html, title);
     }
 
     // ===================== LƯU NHÁP TỰ ĐỘNG + DANH SÁCH KHẢO SÁT ĐÃ LƯU (IndexedDB) =====================
@@ -2558,7 +2589,8 @@
                             '**Không lấy được GPS:** bật định vị (Location) cho trình duyệt trong Cài đặt điện thoại, mở ứng dụng qua HTTPS. Nếu vẫn không được, nhập toạ độ tay từ Google Maps.',
                             '**Báo bộ nhớ đầy:** xuất PDF ngay, sau đó bắt đầu phiếu mới hoặc xoá bớt ảnh, bản cũ trong danh sách.',
                             '**Chữ ký không hiện trong PDF:** kiểm tra đã ký đủ trước khi xuất.',
-                            '**Không hiện hộp thoại In:** thử lại bằng Chrome (Android, máy tính) hoặc Safari (iPhone), và cho phép trình duyệt mở cửa sổ in.',
+                            '**Không hiện hộp thoại In, hoặc Word không tải được:** kiểm tra xem app có đang mở **trong Zalo/Facebook** không (thanh đỏ trên đầu trang sẽ báo). Trình duyệt trong các ứng dụng đó không hỗ trợ xuất PDF và tải file. Hãy bấm nút ⋯ của Zalo, chọn “Mở bằng trình duyệt”, hoặc sao chép liên kết rồi mở bằng **Chrome** (Android) / **Safari** (iPhone).',
+                            '**Hộp thoại In hiện ra nhưng bản xem trước trống:** đợi 2–3 giây cho ảnh tải xong rồi thử lại. Trên iPhone, ở màn hình In hãy chụm hai ngón tay vào bản xem trước để lưu thành PDF.',
                             '**Mở lại không thấy phiếu cũ:** kiểm tra đang dùng đúng máy và trình duyệt đã điền. Vào mục “Đã lưu” ở thanh dưới cùng để kiểm tra.'
                         )
                     )
@@ -3605,6 +3637,15 @@
         });
     })();
 
+    // Cảnh báo khi mở trong Zalo/Facebook...: các trình duyệt nhúng này thường không hỗ trợ in PDF và tải file
+    (function inAppNotice() {
+        const n = inAppBrowserName();
+        const el = document.getElementById('inAppBanner');
+        if (!n || !el) return;
+        el.querySelector('.ia-txt').innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Đang mở trong <b>' + n + '</b>: xuất PDF và Word thường không dùng được ở đây. Hãy mở bằng <b>Chrome</b> (Android) hoặc <b>Safari</b> (iPhone).';
+        el.style.display = 'flex';
+    })();
+
     function scheduleSaveForCanvas(canvasId) {
         if (canvasId === 'sigCustomer' || canvasId === 'sigSurveyor') { scheduleDraftSave(); return; }
         const prefix = canvasId.split('-')[0];
@@ -4328,38 +4369,6 @@
         return [cfg.code, cust, dateStr, ver].filter(Boolean).join('_') + '.' + ext;
     }
 
-    function exportTabToPDF(tabKey) {
-        const cfg = TAB_CONFIG[tabKey];
-        const title = buildTabFileName(tabKey, 'pdf').replace(/\.pdf$/, '');
-        const html = `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><title>${title}</title>
-            <link href="https://fonts.googleapis.com/css2?family=Tinos:wght@400;700&display=swap" rel="stylesheet">
-            <style>@page{size:A4;margin:${getMargins().top}mm ${getMargins().right}mm ${getMargins().bottom}mm ${getMargins().left}mm;}
-            html,body{margin:0;padding:0;}img{max-width:100%;}</style>
-            </head><body>${buildTabReportHTML(tabKey)}</body></html>`;
-        const iframe = document.createElement('iframe');
-        iframe.style.position = 'fixed'; iframe.style.right = '0'; iframe.style.bottom = '0';
-        iframe.style.width = '0'; iframe.style.height = '0'; iframe.style.border = '0';
-        document.body.appendChild(iframe);
-        const doc = iframe.contentWindow.document;
-        doc.open(); doc.write(html); doc.close();
-        // Đổi tạm tiêu đề tab chính để hộp thoại "Lưu thành PDF" gợi ý đúng tên file
-        // (nhiều trình duyệt di động lấy tên theo document.title của tab chính, không phải iframe ẩn).
-        const _originalTitle = document.title;
-        document.title = title;
-        const doPrint = function() {
-            try { iframe.contentWindow.focus(); iframe.contentWindow.print(); }
-            catch (err) { alert('Không mở được hộp thoại In: ' + err.message); }
-            setTimeout(() => {
-                if (iframe.parentNode) document.body.removeChild(iframe);
-                document.title = _originalTitle;
-            }, 1000);
-        };
-        const imgs = Array.from(doc.images || []);
-        let pending = imgs.filter(im => !(im.complete && im.naturalWidth > 0)).length;
-        if (pending === 0) setTimeout(doPrint, 300);
-        else { imgs.forEach(im => { if (im.complete && im.naturalWidth > 0) return; im.onload = im.onerror = () => { if (--pending <= 0) setTimeout(doPrint, 300); }; }); setTimeout(doPrint, 5000); }
-    }
-
     // ===== Xuất Word (.doc kiểu "Word Filtered HTML") dùng chung cho mọi phiếu =====
     // Word bỏ qua max-width/max-height của thẻ <img> nên ảnh không có width/height sẽ hiện theo kích thước gốc
     // (chữ ký canvas 600x220 px bị phóng rất to, làm vỡ bảng). Hàm dưới đọc kích thước ảnh từ chính dữ liệu ảnh
@@ -4444,10 +4453,12 @@
         setTimeout(function() { URL.revokeObjectURL(link.href); }, 4000);
     }
     function exportToDocx() {
+        if (!warnInAppBrowser('Word')) return;
         try { downloadWordDoc(getReportHTML(), buildFileName('doc')); }
         catch (err) { alert('Không thể xuất Word: ' + err.message); }
     }
     function exportTabToDocx(tabKey) {
+        if (!warnInAppBrowser('Word')) return;
         try {
             downloadWordDoc(buildTabReportHTML(tabKey), buildTabFileName(tabKey, 'doc'));
         } catch (err) { alert('Không thể xuất Word: ' + err.message); }
