@@ -1,11 +1,20 @@
-/* NL Office — Service Worker
- * Mục tiêu: mở được app khi mất sóng, và luôn ưu tiên bản mới nhất khi có mạng.
- * Chỉ lưu file trang (index.html). Dữ liệu phiếu (nháp, đã lưu, ảnh, chữ ký) nằm trong IndexedDB của app, không đụng tới ở đây.
- * Khi sửa logic trong file này, đổi số ở CACHE_NAME để máy cũ dọn bản lưu cũ. */
-const CACHE_NAME = 'nl-office-v1';
-const INDEX_URL = new URL('./index.html', self.registration.scope).href;
-const NAV_TIMEOUT_MS = 4000;   // mạng yếu: quá 4 giây thì mở ngay bản đã lưu, tải bản mới ở nền
+/* NL Office — Service Worker with Auto-Update Checking
+ * Mục tiêu:
+ *  1. Mở được app khi mất sóng (offline-first)
+ *  2. Luôn ưu tiên bản mới nhất khi có mạng
+ *  3. Tự động kiểm tra cập nhật định kỳ (mỗi 1 giờ hoặc khi reload)
+ *  4. Thông báo user khi có bản mới
+ *
+ * Dữ liệu phiếu (nháp, đã lưu, ảnh, chữ ký) nằm trong IndexedDB, không bị ảnh hưởng.
+ * Khi sửa logic, đổi số ở CACHE_NAME để xóa cache cũ.
+ */
 
+const CACHE_NAME = 'nl-office-v2';
+const INDEX_URL = new URL('./khao_sat_dmt.html', self.registration.scope).href;
+const NAV_TIMEOUT_MS = 4000;   // mạng yếu: quá 4 giây thì mở ngay bản đã lưu
+const UPDATE_CHECK_INTERVAL = 3600000; // 1 giờ (ms)
+
+// ============= INSTALL =============
 self.addEventListener('install', function (event) {
     event.waitUntil((async function () {
         const cache = await caches.open(CACHE_NAME);
@@ -16,55 +25,113 @@ self.addEventListener('install', function (event) {
     })());
 });
 
+// ============= ACTIVATE - Dọn cache cũ =============
 self.addEventListener('activate', function (event) {
     event.waitUntil((async function () {
         const names = await caches.keys();
-        await Promise.all(names.filter(function (n) { return n.indexOf('nl-office-') === 0 && n !== CACHE_NAME; })
-            .map(function (n) { return caches.delete(n); }));
+        await Promise.all(
+            names
+                .filter(n => n.indexOf('nl-office-') === 0 && n !== CACHE_NAME)
+                .map(n => caches.delete(n))
+        );
         await self.clients.claim();
     })());
 });
 
+// ============= UTILITIES =============
 function versionOf(res) {
     return res.headers.get('etag') || res.headers.get('last-modified') || res.headers.get('content-length') || '';
 }
-function delay(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 
-async function notifyClients() {
-    const list = await self.clients.matchAll({ type: 'window' });
-    list.forEach(function (c) { c.postMessage({ type: 'NL_UPDATED' }); });
+function delay(ms) {
+    return new Promise(r => setTimeout(r, ms));
 }
 
+async function notifyClients(message) {
+    const list = await self.clients.matchAll({ type: 'window' });
+    list.forEach(c => c.postMessage(message));
+}
+
+// ============= NAVIGATION HANDLING =============
 async function handleNavigation() {
     const cache = await caches.open(CACHE_NAME);
     const cached = await cache.match(INDEX_URL);
     const cachedVersion = cached ? versionOf(cached) : '';
 
-    const net = fetch(INDEX_URL, { cache: 'no-cache' }).then(async function (res) {
+    const net = fetch(INDEX_URL, { cache: 'no-cache' }).then(async res => {
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const changed = !cached || versionOf(res) !== cachedVersion;
         await cache.put(INDEX_URL, res.clone());
-        return { res: res, changed: changed };
+        return { res, changed };
     });
 
-    if (!cached) {                       // chưa có bản lưu (hiếm): buộc phải chờ mạng
-        try { return (await net).res; } catch (e) { return Response.error(); }
+    if (!cached) {
+        try { return (await net).res; }
+        catch (e) { return Response.error(); }
     }
+
     const first = await Promise.race([
-        net.then(function (r) { return { net: r }; }, function () { return { failed: true }; }),
-        delay(NAV_TIMEOUT_MS).then(function () { return { timeout: true }; })
+        net.then(r => ({ net: r }), () => ({ failed: true })),
+        delay(NAV_TIMEOUT_MS).then(() => ({ timeout: true }))
     ]);
-    if (first.net) return first.net.res;            // có mạng và đủ nhanh: dùng bản mới nhất
-    if (first.timeout) {                            // mạng chậm: mở bản đã lưu, báo khi bản mới về tới
-        net.then(function (r) { if (r.changed) notifyClients(); }, function () { /* mất mạng: bỏ qua */ });
+
+    if (first.net) return first.net.res;
+    if (first.timeout) {
+        net.then(
+            r => { if (r.changed) notifyClients({ type: 'NL_UPDATED' }); },
+            () => {}
+        );
     }
-    return cached;                                  // mất mạng hoặc lỗi máy chủ
+    return cached;
 }
 
-self.addEventListener('fetch', function (event) {
+// ============= FETCH EVENT =============
+self.addEventListener('fetch', event => {
     const req = event.request;
     if (req.method !== 'GET' || req.mode !== 'navigate') return;
     const url = new URL(req.url);
     if (url.origin !== self.location.origin) return;
     event.respondWith(handleNavigation());
+});
+
+// ============= AUTO-UPDATE CHECKING (Background) =============
+async function checkForUpdates() {
+    try {
+        const cache = await caches.open(CACHE_NAME);
+        const cached = await cache.match(INDEX_URL);
+        const cachedVersion = cached ? versionOf(cached) : '';
+
+        const res = await fetch(INDEX_URL, { cache: 'no-cache' });
+        if (!res.ok) return;
+
+        const newVersion = versionOf(res);
+        const hasUpdate = cached && newVersion && newVersion !== cachedVersion;
+
+        if (hasUpdate) {
+            // Có cập nhật mới
+            await cache.put(INDEX_URL, res.clone());
+            await notifyClients({
+                type: 'NL_UPDATE_AVAILABLE',
+                version: newVersion,
+                timestamp: new Date().toISOString()
+            });
+        }
+    } catch (err) {
+        // Bỏ qua lỗi kiểm tra (mạng yếu, etc.)
+    }
+}
+
+// Kiểm tra update khi app khởi động
+self.addEventListener('activate', () => {
+    checkForUpdates();
+});
+
+// Kiểm tra update định kỳ khi app hoạt động (via postMessage từ client)
+self.addEventListener('message', event => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+    if (event.data && event.data.type === 'CHECK_UPDATE') {
+        checkForUpdates();
+    }
 });

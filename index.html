@@ -126,9 +126,39 @@
             .no-print { display: none !important; }
             .survey-container { box-shadow: none; margin: 0; padding: 0; }
         }
+        /* Animation cho nút cài đặt */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        #installAppBtn {
+            position: relative;
+        }
+        #installAppBtn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -8px;
+            width: 8px;
+            height: 8px;
+            background: #dc3545;
+            border-radius: 50%;
+            transform: translateY(-50%);
+            animation: dot-pulse 1.5s infinite;
+        }
+        @keyframes dot-pulse {
+            0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
+            50% { opacity: 0.3; transform: translateY(-50%) scale(0.8); }
+        }
     </style>
 </head>
 <body>
+
+<!-- Install App Button - Fixed Top Right -->
+<button type="button" id="installAppBtn" class="btn btn-success fw-bold" style="position: fixed; top: 15px; right: 15px; z-index: 1050; display: none; animation: pulse 2s infinite; box-shadow: 0 4px 12px rgba(46, 158, 91, 0.3);" onclick="installApp()">
+    <i class="fa-solid fa-download"></i> ⬇️ Cài đặt ứng dụng
+</button>
 
 <div class="container survey-container">
     <!-- TIÊU ĐỀ & THÔNG TIN CÔNG TY -->
@@ -180,9 +210,6 @@
             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="openSavedListModal()">
                 <i class="fa-solid fa-folder-open"></i> Danh sách đã lưu (<span id="savedListBadge">0</span>)
             </button>
-            <button type="button" id="installAppBtn" class="btn btn-outline-success btn-sm" style="display:none;" onclick="installApp()">
-                <i class="fa-solid fa-download"></i> Cài đặt ứng dụng
-            </button>
             <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearDraft()"><i class="fa-solid fa-trash"></i> Xóa bản nháp</button>
         </div>
     </div>
@@ -230,7 +257,7 @@
                 <label class="form-label small">Tọa Độ GPS (Google Maps):</label>
                 <div class="input-group input-group-sm">
                     <input type="text" class="form-control" id="gpsCoordinates" placeholder="Lấy tọa độ GPS, VD: 20.844900, 106.688100">
-                    <button class="btn btn-outline-primary" type="button" onclick="getGPSLocation()"><i class="fa-solid fa-location-crosshairs"></i></button>
+                    <button class="btn btn-primary fw-bold" type="button" style="width: 120px;" onclick="getGPSLocation()"><i class="fa-solid fa-location-dot"></i> Lấy GPS</button>
                 </div>
             </div>
             <div class="col-12 col-md-4">
@@ -1002,13 +1029,46 @@
             </details>
 
             <details class="help-section">
-                <summary>8. Cài đặt ứng dụng vào màn hình chính</summary>
+                <summary>8. Cài đặt ứng dụng vào màn hình chính (PWA)</summary>
                 <div class="help-body">
+                    <p><b>Ứng dụng này hoạt động như một app thật trên điện thoại!</b> Cài đặt vào màn hình chính để:</p>
                     <ul>
-                        <li><b>Android (Chrome):</b> khi đủ điều kiện, nút "Cài đặt ứng dụng" tự hiện ở đầu trang — bấm để cài, mở nhanh như app thật.</li>
-                        <li><b>iPhone (Safari):</b> bấm nút đó sẽ hiện hướng dẫn — chạm biểu tượng Chia sẻ trên Safari, chọn "Thêm vào Màn hình chính".</li>
+                        <li>✅ Mở nhanh như app native (không cần mở trình duyệt)</li>
+                        <li>✅ Hoạt động offline sau khi mở lần đầu</li>
+                        <li>✅ Tiết kiệm dung lượng điện thoại</li>
+                        <li>✅ Dữ liệu được lưu trên máy (an toàn, riêng tư)</li>
                     </ul>
-                    <div class="help-note">Cài tự động trên Android cần mở qua HTTPS; mở file cục bộ vẫn dùng được, chỉ không hiện nút cài tự động.</div>
+
+                    <p><b>Cách cài đặt:</b></p>
+                    <ul>
+                        <li><b>🤖 Android (Chrome, Edge, Samsung Internet):</b>
+                            <ul>
+                                <li>Nút "⬇️ Cài đặt ứng dụng" tự hiện ở đầu trang (khi mở qua HTTPS)</li>
+                                <li>Bấm nút → Trình duyệt hiện popup "Thêm ứng dụng?"</li>
+                                <li>Bấm "Thêm" → Ứng dụng vào màn hình chính ngay lập tức</li>
+                                <li>Tương lai: chạm icon trên màn hình → App mở ngay, không qua Chrome</li>
+                            </ul>
+                        </li>
+
+                        <li><b>📱 iPhone/iPad (Safari):</b>
+                            <ul>
+                                <li>Bấm nút "⬇️ Cài đặt ứng dụng" → Hiện hướng dẫn chi tiết</li>
+                                <li><u>Hoặc cài thủ công:</u> Bấm biểu tượng "Chia sẻ" (hình vuông có mũi tên)</li>
+                                <li>Cuộn xuống → Chọn "Thêm vào Màn hình chính"</li>
+                                <li>Nhập tên (ví dụ: "Khảo Sát DMT") → "Thêm"</li>
+                                <li>Ứng dụng sẽ có icon trên màn hình, mở nhanh như app</li>
+                            </ul>
+                        </li>
+
+                        <li><b>💻 Máy tính (Chrome, Edge):</b>
+                            <ul>
+                                <li>Bấm nút "⬇️ Cài đặt ứng dụng" hoặc icon địa chỉ trong thanh URL</li>
+                                <li>Chọn "Cài đặt ứng dụng" → App mở trong cửa sổ riêng, không thanh trình duyệt</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <div class="help-note"><b>⚠️ Lưu ý:</b> Nút cài đặt tự động chỉ hiện khi mở qua HTTPS (GitHub Pages). Mở file cục bộ vẫn dùng được 100%, chỉ không hiện nút cài tự động.</div>
                 </div>
             </details>
 
@@ -1329,26 +1389,139 @@
         container.style.display = (status === 'Không có tủ bù') ? 'none' : 'block';
     }
 
+    let gpsRetryCount = 0;
+    const GPS_MAX_RETRIES = 3;
+
     function getGPSLocation() {
         const gpsInput = document.getElementById('gpsCoordinates');
-        if (navigator.geolocation) {
-            gpsInput.value = "Đang lấy tọa độ...";
-            navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    const lat = position.coords.latitude.toFixed(6);
-                    const lon = position.coords.longitude.toFixed(6);
-                    gpsInput.value = `${lat}, ${lon}`;
-                    scheduleDraftSave();
-                },
-                function(error) {
-                    alert('Không thể lấy GPS tự động (cần bật định vị và mở trang qua HTTPS). Bạn có thể nhập tọa độ thủ công vào ô bên cạnh (lấy từ Google Maps: chạm giữ vị trí trên bản đồ rồi sao chép tọa độ).');
-                    gpsInput.value = '';
-                },
-                { timeout: 10000 }
-            );
-        } else {
-            alert('Trình duyệt không hỗ trợ GPS. Vui lòng nhập tọa độ thủ công vào ô bên cạnh.');
+        const gpsBtn = document.querySelector('button[onclick="getGPSLocation()"]');
+
+        if (!navigator.geolocation) {
+            showGPSError('Trình duyệt không hỗ trợ GPS', 'Vui lòng nhập tọa độ thủ công (lấy từ Google Maps hoặc bản đồ khác).');
+            return;
         }
+
+        gpsRetryCount = 0;
+        gpsBtn.disabled = true;
+        gpsBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lấy tọa độ...';
+        gpsInput.value = '🔄 Đang lấy vị trí...';
+
+        // Yêu cầu permission + lấy vị trí
+        attemptGPSFetch(gpsInput, gpsBtn);
+    }
+
+    function attemptGPSFetch(gpsInput, gpsBtn) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                // ✅ Thành công
+                const lat = position.coords.latitude.toFixed(6);
+                const lon = position.coords.longitude.toFixed(6);
+                gpsInput.value = `${lat}, ${lon}`;
+                gpsBtn.disabled = false;
+                gpsBtn.innerHTML = '<i class="fa-solid fa-location-dot"></i> Lấy GPS';
+                gpsBtn.style.backgroundColor = '#28a745';
+
+                // Reset màu sau 2 giây
+                setTimeout(() => { gpsBtn.style.backgroundColor = ''; }, 2000);
+                scheduleDraftSave();
+
+                // Hiện toast thành công
+                showGPSSuccess(`✅ Đã lấy vị trí: ${lat}, ${lon}`);
+            },
+            function(error) {
+                // ❌ Lỗi
+                handleGPSError(error, gpsInput, gpsBtn);
+            },
+            {
+                timeout: 15000,
+                maximumAge: 0,
+                enableHighAccuracy: true  // Yêu cầu độ chính xác cao
+            }
+        );
+    }
+
+    function handleGPSError(error, gpsInput, gpsBtn) {
+        gpsBtn.disabled = false;
+        gpsBtn.innerHTML = '<i class="fa-solid fa-location-dot"></i> Lấy GPS';
+        gpsInput.value = '';
+
+        let errorMsg = '';
+        let helpMsg = '';
+
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                errorMsg = '❌ Bạn đã từ chối quyền truy cập vị trí';
+                helpMsg = `
+📱 <b>Cách cấp quyền định vị:</b>
+<br/>• <u>Android:</u> Mở Cài đặt → Ứng dụng → Chọn trình duyệt → Quyền → Bật "Vị trí"
+<br/>• <u>iPhone:</u> Mở Cài đặt → Safari (hoặc trình duyệt) → Vị trí → Chọn "Trong khi sử dụng ứng dụng"
+<br/>• <u>Máy tính:</u> Bấm icon khoá/thông tin ở thanh URL → Bật quyền "Vị trí"
+<br/><br/>Sau khi cấp quyền, nhấn lại nút "Lấy GPS".
+                `;
+                break;
+            case error.POSITION_UNAVAILABLE:
+                errorMsg = '❌ Không thể xác định vị trí';
+                helpMsg = `
+📡 <b>Nguyên nhân:</b> Signal GPS yếu hoặc trình duyệt không kết nối được.
+<br/><b>Cách khắc phục:</b>
+<br/>• Chắc chắn bạn ở ngoài trời, nơi có tín hiệu GPS tốt
+<br/>• Đợi 10-15 giây cho GPS định vị lại
+<br/>• Nếu vẫn không được, nhập tọa độ thủ công từ Google Maps
+                `;
+                break;
+            case error.TIMEOUT:
+                errorMsg = '⏱️ Hết thời gian chờ GPS';
+                helpMsg = `
+<b>Nguyên nhân:</b> GPS tìm kiếm vị trí quá lâu.
+<br/><b>Cách khắc phục:</b>
+<br/>• Kiểm tra bạn có mở qua HTTPS (GitHub Pages, không phải file local)
+<br/>• Bật định vị trong Cài đặt điện thoại
+<br/>• Thử lại lần nữa, hoặc nhập tọa độ thủ công
+                `;
+                break;
+            default:
+                errorMsg = '❌ Lỗi khi lấy GPS: ' + error.message;
+                helpMsg = 'Vui lòng kiểm tra quyền định vị hoặc nhập tọa độ thủ công.';
+        }
+
+        showGPSError(errorMsg, helpMsg);
+    }
+
+    function showGPSError(title, message) {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 24px; border-radius: 12px;
+            z-index: 2000; max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            border-left: 5px solid #dc3545;
+        `;
+        modal.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                <h5 style="margin: 0; color: #dc3545;">${title}</h5>
+                <button type="button" onclick="this.closest('div').remove();" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">×</button>
+            </div>
+            <div style="font-size: 0.95rem; line-height: 1.6; color: #333; margin-bottom: 16px;">
+                ${message}
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="this.closest('div').remove();">Đóng</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="getGPSLocation(); this.closest('div').remove();">Thử lại</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+
+    function showGPSSuccess(message) {
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed; bottom: 20px; right: 20px;
+            background: #28a745; color: white; padding: 16px 20px;
+            border-radius: 8px; z-index: 1999; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 0.95rem;
+        `;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
     }
 
     // ===================== CHỮ KÝ ĐIỆN TỬ (CANVAS) =====================
@@ -3189,6 +3362,228 @@
     document.addEventListener('change', function(e) {
         if (e.target && e.target.tagName !== 'CANVAS') routeScheduleSave(e.target);
     });
+
+    // ========== Modal Hướng dẫn Cài đặt PWA ==========
+    function showInstallGuideModal() {
+        const ua = navigator.userAgent.toLowerCase();
+        const isIOS = /iphone|ipad|ipod/.test(ua);
+
+        let modalHTML = `
+        <div id="installGuideModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+            z-index: 9999; padding: 10px;">
+            <div style="background: white; border-radius: 12px; padding: 24px; max-width: 500px;
+                max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 2.5rem; margin-bottom: 10px;">⬇️</div>
+                    <h3 style="margin: 0; color: var(--brand-navy);">Cài đặt Ứng dụng</h3>
+                    <p style="color: #666; margin: 8px 0 0 0; font-size: 0.9rem;">Cài đặt như một app thật trên điện thoại</p>
+                </div>
+        `;
+
+        if (isIOS) {
+            modalHTML += `
+            <div style="background: #f0f7ff; border-left: 4px solid var(--brand-blue); padding: 12px; border-radius: 6px; margin-bottom: 16px;">
+                <p style="margin: 0; font-weight: 600; color: var(--brand-navy);">📱 iPhone / iPad / iPod</p>
+            </div>
+            <ol style="padding-left: 20px; margin: 0; line-height: 1.8;">
+                <li style="margin-bottom: 12px;">
+                    Bấm biểu tượng <b>"Chia sẻ"</b> (hình vuông có mũi tên) ở thanh Safari
+                </li>
+                <li style="margin-bottom: 12px;">
+                    Cuộn xuống danh sách, chọn <b>"Thêm vào Màn hình chính"</b>
+                </li>
+                <li style="margin-bottom: 12px;">
+                    Nhập tên (ví dụ: <b>"Khảo Sát DMT"</b>)
+                </li>
+                <li>
+                    Bấm nút <b>"Thêm"</b> — ứng dụng sẽ hiện trên màn hình chính
+                </li>
+            </ol>
+            <div style="background: #fff3cd; border-left: 4px solid #ff9800; padding: 12px; border-radius: 6px; margin-top: 16px; font-size: 0.9rem;">
+                <p style="margin: 0;"><b>💡 Lưu ý:</b> Nút "Cài đặt ứng dụng" này chỉ hiện trên Android. Trên iPhone, bạn phải cài thủ công qua Safari.</p>
+            </div>
+            `;
+        } else {
+            modalHTML += `
+            <div style="background: #f0f7ff; border-left: 4px solid #2e9e5b; padding: 12px; border-radius: 6px; margin-bottom: 16px;">
+                <p style="margin: 0; font-weight: 600; color: #1a5a3a;">🤖 Android (Chrome, Edge, Samsung Internet)</p>
+            </div>
+            <ol style="padding-left: 20px; margin: 0 0 20px 0; line-height: 1.8;">
+                <li style="margin-bottom: 12px;">
+                    Bấm nút <b>"⬇️ Cài đặt ứng dụng"</b> ở đầu trang (nút xanh)
+                </li>
+                <li style="margin-bottom: 12px;">
+                    Trình duyệt sẽ hiện popup <b>"Thêm ứng dụng?"</b>
+                </li>
+                <li style="margin-bottom: 12px;">
+                    Bấm <b>"Thêm"</b> — ứng dụng cài ngay lập tức vào màn hình chính
+                </li>
+                <li>
+                    Tương lai: Chạm icon trên màn hình → App mở ngay, <u>không cần qua Chrome</u>
+                </li>
+            </ol>
+            <div style="background: #f3f8f5; border-left: 4px solid #2e9e5b; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 0.9rem;">
+                <p style="margin: 0;"><b>✅ Lợi ích:</b></p>
+                <ul style="margin: 6px 0 0 0; padding-left: 18px;">
+                    <li>Mở nhanh như app thật (không qua trình duyệt)</li>
+                    <li>Hoạt động offline sau khi mở lần đầu</li>
+                    <li>Tiết kiệm dung lượng điện thoại</li>
+                    <li>Dữ liệu riêng tư, lưu trên máy</li>
+                </ul>
+            </div>
+            <div style="background: #fff3cd; border-left: 4px solid #ff9800; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 0.9rem;">
+                <p style="margin: 0;"><b>⚠️ Lưu ý:</b> Cài đặt tự động chỉ hiện khi mở qua HTTPS (GitHub Pages hoặc web). Mở file cục bộ vẫn dùng được 100%, chỉ không hiện nút cài tự động.</p>
+            </div>
+            <div style="background: #f0f7ff; border-left: 4px solid var(--brand-blue); padding: 12px; border-radius: 6px; margin-bottom: 16px;">
+                <p style="margin: 0; font-weight: 600; color: var(--brand-navy);">💻 Máy tính (Chrome, Edge)</p>
+            </div>
+            <p style="margin: 0 0 12px 0; line-height: 1.6;">
+                Bấm nút <b>"⬇️ Cài đặt ứng dụng"</b> hoặc icon địa chỉ trong thanh URL, chọn "Cài đặt ứng dụng" → App mở trong cửa sổ riêng, gọn gàng như app desktop.
+            </p>
+            `;
+        }
+
+        modalHTML += `
+        <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+            <button type="button" class="btn btn-primary" onclick="closeInstallGuideModal(); deferredInstallPrompt?.prompt();">
+                <i class="fa-solid fa-download"></i> Cài đặt ngay
+            </button>
+            <button type="button" class="btn btn-outline-secondary" onclick="closeInstallGuideModal();">
+                Đóng
+            </button>
+        </div>
+            </div>
+        </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+
+    function closeInstallGuideModal() {
+        const modal = document.getElementById('installGuideModal');
+        if (modal) modal.remove();
+    }
+
+    // Override installApp() với UX tốt hơn
+    function installApp() {
+        showInstallGuideModal();
+
+        // Nếu deferredInstallPrompt tồn tại, gọi prompt sau 1 giây
+        if (deferredInstallPrompt) {
+            setTimeout(() => {
+                deferredInstallPrompt.prompt().catch(err => {
+                    console.log('Install prompt error:', err);
+                });
+            }, 1000);
+        }
+    }
+
+    // ========== SERVICE WORKER REGISTRATION & AUTO-UPDATE CHECKING ==========
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').then(
+            reg => {
+                console.log('✅ Service Worker registered:', reg);
+
+                // Lắng nghe message từ Service Worker (update notification)
+                navigator.serviceWorker.addEventListener('message', event => {
+                    if (event.data.type === 'NL_UPDATE_AVAILABLE') {
+                        showUpdateNotification();
+                    }
+                });
+
+                // Kiểm tra update định kỳ (mỗi 1 giờ)
+                setInterval(() => {
+                    if (reg.active) reg.active.postMessage({ type: 'CHECK_UPDATE' });
+                }, 3600000);
+            },
+            err => {
+                console.log('❌ Service Worker registration failed:', err);
+            }
+        );
+    }
+
+    // ========== UPDATE NOTIFICATION MODAL ==========
+    function showUpdateNotification() {
+        const existingModal = document.getElementById('updateNotificationModal');
+        if (existingModal) return; // Tránh duplicate modal
+
+        const modal = document.createElement('div');
+        modal.id = 'updateNotificationModal';
+        modal.style.cssText = `
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 28px; border-radius: 14px;
+            z-index: 3000; max-width: 480px; box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+            border-top: 5px solid #28a745;
+        `;
+        modal.innerHTML = `
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 3rem; margin-bottom: 12px;">🚀</div>
+                <h4 style="margin: 0; color: var(--brand-navy);">Có Cập Nhật Mới</h4>
+                <p style="margin: 8px 0 0 0; color: #666; font-size: 0.95rem;">
+                    Phiên bản mới của ứng dụng đã sẵn sàng. Cập nhật ngay để có tính năng và sửa lỗi mới nhất!
+                </p>
+            </div>
+
+            <div style="background: #f0f9ff; border-left: 4px solid var(--brand-blue); padding: 12px; border-radius: 6px; margin-bottom: 20px;">
+                <p style="margin: 0; font-size: 0.9rem; color: #333;">
+                    <b>ℹ️ Lưu ý:</b> Dữ liệu phiếu khảo sát của bạn sẽ được giữ nguyên. Chỉ ứng dụng được cập nhật.
+                </p>
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" class="btn btn-outline-secondary" onclick="closeUpdateNotification()">
+                    Cập nhật lần tới
+                </button>
+                <button type="button" class="btn btn-success fw-bold" onclick="applyUpdate()">
+                    <i class="fa-solid fa-download"></i> Cập nhật ngay
+                </button>
+            </div>
+
+            <div style="position: absolute; top: 10px; right: 15px;">
+                <button type="button" onclick="closeUpdateNotification()"
+                        style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999;">
+                    ×
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+    }
+
+    function closeUpdateNotification() {
+        const modal = document.getElementById('updateNotificationModal');
+        if (modal) modal.remove();
+    }
+
+    function applyUpdate() {
+        closeUpdateNotification();
+
+        // Thông báo cho Service Worker skip waiting
+        if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+        }
+
+        // Reload app sau 1 giây
+        setTimeout(() => {
+            showUpdateToast('🔄 Đang tải phiên bản mới...');
+            setTimeout(() => {
+                location.reload(true);
+            }, 1500);
+        }, 500);
+    }
+
+    function showUpdateToast(message) {
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed; bottom: 20px; right: 20px;
+            background: var(--brand-blue); color: white; padding: 16px 20px;
+            border-radius: 8px; z-index: 3001; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 0.95rem; font-weight: 600;
+        `;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+    }
 </script>
 
 </body>
