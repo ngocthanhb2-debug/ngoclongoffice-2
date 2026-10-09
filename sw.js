@@ -9,7 +9,8 @@
  * Khi sửa logic, đổi số ở CACHE_NAME để xóa cache cũ.
  */
 
-const CACHE_NAME = 'nl-office-v2';
+const CACHE_NAME = 'nl-office-v3';
+const CDN_HOSTS = ['cdn.jsdelivr.net', 'cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 const INDEX_URL = new URL('./khao_sat_dmt.html', self.registration.scope).href;
 const NAV_TIMEOUT_MS = 4000;   // mạng yếu: quá 4 giây thì mở ngay bản đã lưu
 const UPDATE_CHECK_INTERVAL = 3600000; // 1 giờ (ms)
@@ -88,8 +89,19 @@ async function handleNavigation() {
 // ============= FETCH EVENT =============
 self.addEventListener('fetch', event => {
     const req = event.request;
-    if (req.method !== 'GET' || req.mode !== 'navigate') return;
+    if (req.method !== 'GET') return;
     const url = new URL(req.url);
+    // Thư viện giao diện (Bootstrap, FontAwesome, font): lưu lại để mở được khi mất mạng
+    if (CDN_HOSTS.indexOf(url.hostname) !== -1) {
+        event.respondWith((async function () {
+            const cache = await caches.open(CACHE_NAME);
+            const hit = await cache.match(req);
+            const net = fetch(req).then(res => { if (res && (res.ok || res.type === 'opaque')) cache.put(req, res.clone()); return res; }).catch(() => null);
+            return hit || (await net) || Response.error();
+        })());
+        return;
+    }
+    if (req.mode !== 'navigate') return;
     if (url.origin !== self.location.origin) return;
     event.respondWith(handleNavigation());
 });
