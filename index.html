@@ -88,6 +88,293 @@
 
         .btn { border-radius: 10px; font-weight: 600; }
         .btn-sm { border-radius: 8px; }
+
+        /* ========== NEW HEADER DESIGN ========== */
+        .app-header-new {
+            background: linear-gradient(135deg, var(--brand-blue), var(--brand-blue-dark));
+            color: white;
+            padding: 14px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 16px rgba(13, 110, 253, 0.2);
+            margin-bottom: 20px;
+        }
+        .app-header-new-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+        .app-header-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+        .app-header-info h5 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+        .app-header-info p {
+            margin: 2px 0 0 0;
+            font-size: 0.8rem;
+            opacity: 0.85;
+        }
+        .app-header-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .app-header-actions .btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+        .app-header-actions .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .app-header-actions .btn:active {
+            transform: translateY(0);
+        }
+
+        /* ========== WELCOME SCREEN ========== */
+        #welcomeScreen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--brand-blue) 0%, #1e5c96 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .welcome-container {
+            max-width: 600px;
+        }
+        .welcome-logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .welcome-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        .welcome-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .welcome-guide {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .welcome-guide h4 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .welcome-guide ul {
+            margin: 0;
+            padding-left: 20px;
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+        .welcome-guide li {
+            margin-bottom: 8px;
+        }
+        .welcome-modules {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .welcome-module-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 16px 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .welcome-module-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+        .welcome-module-btn:active {
+            transform: translateY(0);
+        }
+        .welcome-module-icon {
+            font-size: 1.8rem;
+        }
+
+        /* ========== CAMERA MODAL ========== */
+        #cameraModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        #cameraModal.show {
+            display: flex;
+        }
+        .camera-container {
+            background: white;
+            border-radius: 14px;
+            padding: 0;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+        }
+        .camera-header {
+            background: linear-gradient(135deg, var(--brand-blue), var(--brand-blue-dark));
+            color: white;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .camera-header h5 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .camera-close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .camera-close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .camera-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #000;
+            position: relative;
+        }
+        #cameraVideo {
+            flex: 1;
+            width: 100%;
+            object-fit: cover;
+        }
+        .camera-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px;
+            background: #1a1a1a;
+            flex-wrap: wrap;
+        }
+        .camera-controls button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .camera-capture {
+            background: #28a745;
+            color: white;
+        }
+        .camera-capture:hover {
+            background: #20c997;
+            transform: scale(1.05);
+        }
+        .camera-close {
+            background: #6c757d;
+            color: white;
+        }
+        .camera-close:hover {
+            background: #5a6268;
+        }
+        .camera-switch {
+            background: var(--brand-blue);
+            color: white;
+        }
+        .camera-switch:hover {
+            background: var(--brand-blue-dark);
+        }
+
+        /* Photo Gallery in Form */
+        .photo-capture-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, var(--brand-blue), var(--brand-blue-dark));
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .photo-capture-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(13, 110, 253, 0.3);
+        }
         .btn-primary { background: linear-gradient(135deg, var(--brand-blue), var(--brand-blue-dark)); border: none; }
         .btn-danger { background: linear-gradient(135deg, #f4511e, #d84315); border: none; }
         .btn-success { background: linear-gradient(135deg, #2e9e5b, #21793f); border: none; }
@@ -160,35 +447,93 @@
     <i class="fa-solid fa-download"></i> ⬇️ Cài đặt ứng dụng
 </button>
 
-<div class="container survey-container">
-    <!-- TIÊU ĐỀ & THÔNG TIN CÔNG TY -->
-    <div class="row align-items-center mb-3 g-2 app-header">
-        <div class="col-12 col-md-3 text-center text-md-start no-print">
-            <label class="form-label small text-muted mb-1"><i class="fa-solid fa-image"></i> Logo Công ty:</label>
-            <input class="form-control form-control-sm mb-2 no-print" type="file" id="logoInput" accept="image/*" onchange="previewLogo(event)">
-            <div id="logoDisplayContainer"></div>
-            <button type="button" class="btn btn-link btn-sm p-0 mt-1 no-print" onclick="restoreDefaultLogo()" style="font-size:0.75rem;">
-                <i class="fa-solid fa-rotate-left"></i> Dùng lại logo mặc định
+<!-- WELCOME SCREEN -->
+<div id="welcomeScreen" class="no-print">
+    <div class="welcome-container">
+        <div class="welcome-logo">☀️</div>
+        <div class="welcome-title">NL Office</div>
+        <div class="welcome-subtitle">Quản lý dự án điện mặt trời<br>chuyên nghiệp & hiệu quả</div>
+
+        <div class="welcome-guide">
+            <h4>📋 Hướng Dẫn Sử Dụng:</h4>
+            <ul>
+                <li><strong>Chụp ảnh:</strong> Bấm nút 📷 để chụp ảnh trực tiếp từ camera</li>
+                <li><strong>Điền thông tin:</strong> Nhập dữ liệu dự án & khách hàng</li>
+                <li><strong>Xem trước & xuất:</strong> PDF, Word, Zalo hoặc lưu danh sách</li>
+                <li><strong>Offline:</strong> Dữ liệu tự động lưu trên máy, hoạt động offline</li>
+            </ul>
+        </div>
+
+        <div class="welcome-modules">
+            <button type="button" class="welcome-module-btn" onclick="startModule('khaosat')">
+                <span class="welcome-module-icon">🔍</span>
+                Khảo Sát
+            </button>
+            <button type="button" class="welcome-module-btn" onclick="startModule('baotri')">
+                <span class="welcome-module-icon">🔧</span>
+                Bảo Trì
+            </button>
+            <button type="button" class="welcome-module-btn" onclick="startModule('baohanh')">
+                <span class="welcome-module-icon">⚠️</span>
+                Bảo Hành
+            </button>
+            <button type="button" class="welcome-module-btn" onclick="startModule('bangiao')">
+                <span class="welcome-module-icon">📦</span>
+                Bàn Giao
+            </button>
+            <button type="button" class="welcome-module-btn" onclick="startModule('lamviec')">
+                <span class="welcome-module-icon">👥</span>
+                Làm Việc
+            </button>
+            <button type="button" class="welcome-module-btn" onclick="startModule('baocao')">
+                <span class="welcome-module-icon">📊</span>
+                Báo Cáo
             </button>
         </div>
-        <div class="col-12 col-md-9">
-            <div class="row g-2">
-                <div class="col-12">
-                    <input type="text" class="form-control form-control-sm fw-bold text-primary" id="companyName" placeholder="Tên Công Ty Khảo Sát / Thi Công" value="CÔNG TY TNHH NĂNG LƯỢNG NGỌC LONG">
-                </div>
-                <div class="col-12 col-md-6">
-                    <input type="text" class="form-control form-control-sm" id="companyContact" placeholder="Điện thoại / Email liên hệ" value="0865 235 569">
-                </div>
-                <div class="col-12 col-md-6">
-                    <input type="text" class="form-control form-control-sm" id="companyTaxCode" placeholder="Mã số thuế công ty" value="0201986311">
-                </div>
-                <div class="col-12">
-                    <input type="text" class="form-control form-control-sm" id="companyAddress" placeholder="Địa chỉ trụ sở công ty" value="Số nhà 386, TDP Đình Ngọ 2, P. An Phong, TP. Hải Phòng">
-                </div>
-                <div class="col-12 no-print">
-                    <small class="text-muted" id="companyProfileStatus"><i class="fa-solid fa-building"></i> Logo và thông tin công ty được lưu cố định, giữ nguyên khi tạo khảo sát mới.</small>
-                </div>
+    </div>
+</div>
+
+<!-- CAMERA MODAL -->
+<div id="cameraModal">
+    <div class="camera-container">
+        <div class="camera-header">
+            <h5>📷 Chụp Ảnh</h5>
+            <button type="button" class="camera-close-btn" onclick="closeCameraModal()">×</button>
+        </div>
+        <div class="camera-content">
+            <video id="cameraVideo" autoplay playsinline></video>
+        </div>
+        <div class="camera-controls">
+            <button type="button" class="camera-capture" onclick="capturePhoto()">
+                <i class="fa-solid fa-camera"></i> Chụp Ảnh
+            </button>
+            <button type="button" class="camera-switch" onclick="switchCamera()">
+                <i class="fa-solid fa-arrow-right-arrow-left"></i> Chuyển Camera
+            </button>
+            <button type="button" class="camera-close" onclick="closeCameraModal()">
+                <i class="fa-solid fa-xmark"></i> Đóng
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container survey-container" id="mainContainer" style="display: none;">
+    <!-- NEW PROFESSIONAL HEADER -->
+    <div class="app-header-new no-print">
+        <div class="app-header-left">
+            <div class="app-header-logo" id="headerLogoDisplay">☀️</div>
+            <div class="app-header-info">
+                <h5 id="headerCompanyName">NGỌC LONG SOLAR</h5>
+                <p id="headerCompanyContact">0865 235 569</p>
             </div>
+        </div>
+        <div class="app-header-actions">
+            <button type="button" class="btn btn-sm" onclick="openSettingsModal()" title="Cài đặt công ty & link chia sẻ">
+                <i class="fa-solid fa-gear"></i> Cài đặt
+            </button>
+            <button type="button" class="btn btn-sm" onclick="shareApp()" title="Chia sẻ ứng dụng qua Zalo">
+                <i class="fa-solid fa-share-nodes"></i> Chia sẻ
+            </button>
         </div>
     </div>
 
@@ -198,6 +543,7 @@
         <li class="nav-item"><button type="button" class="nav-link" data-tab="baohanh" onclick="showTab('baohanh')"><i class="fa-solid fa-triangle-exclamation"></i> Bảo hành</button></li>
         <li class="nav-item"><button type="button" class="nav-link" data-tab="bangiao" onclick="showTab('bangiao')"><i class="fa-solid fa-boxes-stacked"></i> Bàn giao</button></li>
         <li class="nav-item"><button type="button" class="nav-link" data-tab="lamviec" onclick="showTab('lamviec')"><i class="fa-solid fa-people-arrows"></i> Làm việc</button></li>
+        <li class="nav-item"><button type="button" class="nav-link" data-tab="baocao" onclick="showTab('baocao')"><i class="fa-solid fa-file-chart-line"></i> Báo Cáo</button></li>
     </ul>
 
     <div id="tab-khaosat" class="tab-pane">
@@ -349,7 +695,12 @@
             <div class="col-12">
                 <div class="sub-photo-box">
                     <label class="form-label small text-primary fw-bold mb-1"><i class="fa-solid fa-camera"></i> Ảnh vị trí đặt Inverter:</label>
-                    <input class="form-control form-control-sm no-print" type="file" id="inverterImages" accept="image/*" multiple onchange="handleImageUpload(event, 'inverterImages', 'inverterPreviewContainer')">
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <input class="form-control form-control-sm no-print" type="file" id="inverterImages" accept="image/*" multiple onchange="handleImageUpload(event, 'inverterImages', 'inverterPreviewContainer')" style="flex: 1;">
+                        <button type="button" class="photo-capture-btn" onclick="openCameraModal('inverterImages', 'inverterPreviewContainer')">
+                            <i class="fa-solid fa-camera"></i> Chụp
+                        </button>
+                    </div>
                     <div id="inverterPreviewContainer" class="d-flex flex-wrap gap-2 mt-2"></div>
                 </div>
             </div>
@@ -362,7 +713,12 @@
             <div class="col-12 col-md-6">
                 <div class="sub-photo-box mt-0">
                     <label class="form-label small text-primary mb-1"><i class="fa-solid fa-camera"></i> Ảnh đồng hồ điện:</label>
-                    <input class="form-control form-control-sm no-print" type="file" id="meterImages" accept="image/*" multiple onchange="handleImageUpload(event, 'meterImages', 'meterPreviewContainer')">
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <input class="form-control form-control-sm no-print" type="file" id="meterImages" accept="image/*" multiple onchange="handleImageUpload(event, 'meterImages', 'meterPreviewContainer')" style="flex: 1;">
+                        <button type="button" class="photo-capture-btn" onclick="openCameraModal('meterImages', 'meterPreviewContainer')">
+                            <i class="fa-solid fa-camera"></i> Chụp
+                        </button>
+                    </div>
                     <div id="meterPreviewContainer" class="d-flex flex-wrap gap-2 mt-2"></div>
                 </div>
             </div>
@@ -375,7 +731,12 @@
             <div class="col-12 col-md-6">
                 <div class="sub-photo-box mt-0">
                     <label class="form-label small text-primary mb-1"><i class="fa-solid fa-camera"></i> Ảnh tủ điện tổng (MDB):</label>
-                    <input class="form-control form-control-sm no-print" type="file" id="mdbImages" accept="image/*" multiple onchange="handleImageUpload(event, 'mdbImages', 'mdbPreviewContainer')">
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <input class="form-control form-control-sm no-print" type="file" id="mdbImages" accept="image/*" multiple onchange="handleImageUpload(event, 'mdbImages', 'mdbPreviewContainer')" style="flex: 1;">
+                        <button type="button" class="photo-capture-btn" onclick="openCameraModal('mdbImages', 'mdbPreviewContainer')">
+                            <i class="fa-solid fa-camera"></i> Chụp
+                        </button>
+                    </div>
                     <div id="mdbPreviewContainer" class="d-flex flex-wrap gap-2 mt-2"></div>
                 </div>
             </div>
@@ -905,6 +1266,153 @@
         </div>
     </form>
     </div> <!-- /tab-lamviec -->
+
+    <!-- TAB: BÁO CÁO CÔNG VIỆC -->
+    <div id="tab-baocao" class="tab-pane" style="display:none;">
+    <div class="d-flex flex-wrap justify-content-between align-items-center no-print mb-3 px-1 gap-2">
+        <small class="text-muted" id="draftStatus-baocao"><i class="fa-solid fa-floppy-disk"></i> Tự động lưu nháp trên máy này</small>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="openTabRecordsModal()"><i class="fa-solid fa-folder-open"></i> Danh sách đã lưu (<span class="tabRecordsBadge">0</span>)</button>
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearTabDraft('baocao')"><i class="fa-solid fa-trash"></i> Xóa bản nháp</button>
+        </div>
+    </div>
+
+    <div class="text-center mb-3">
+        <h4 class="fw-bold"><i class="fa-solid fa-file-chart-line text-success"></i> BÁO CÁO CÔNG VIỆC HÀNG NGÀY</h4>
+        <p class="text-muted small">Khai báo tiến độ & kết quả công việc thi công</p>
+    </div>
+
+    <form id="baocaoForm">
+        <!-- PHẦN 1: THÔNG TIN CHUNG -->
+        <div class="section-title"><i class="fa-solid fa-info-circle"></i> 1. Thông Tin Chung</div>
+        <div class="row g-2 mb-2">
+            <div class="col-12 col-md-6">
+                <label class="form-label small">Ngày Báo Cáo:</label>
+                <input type="date" class="form-control form-control-sm" id="baocao_ngay" value="">
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label small">Người Lập Báo Cáo:</label>
+                <input type="text" class="form-control form-control-sm" id="baocao_nguoilap" placeholder="Tên kỹ thuật viên / Chủ thi công">
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label small">Dự Án / Địa Điểm:</label>
+                <input type="text" class="form-control form-control-sm" id="baocao_diadiem" placeholder="Địa chỉ công trường">
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label small">Thời Tiết:</label>
+                <select class="form-select form-select-sm" id="baocao_thoitiet">
+                    <option value="">-- Chọn --</option>
+                    <option value="Nắng">☀️ Nắng</option>
+                    <option value="Mây">☁️ Mây</option>
+                    <option value="Mưa nhẹ">🌦️ Mưa nhẹ</option>
+                    <option value="Mưa">🌧️ Mưa</option>
+                    <option value="Bão">⛈️ Bão</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- PHẦN 2: DANH SÁCH CÔNG NHÂN -->
+        <div class="section-title"><i class="fa-solid fa-people-group"></i> 2. Danh Sách Công Nhân Tham Gia</div>
+        <div class="row g-2 mb-2">
+            <div class="col-12">
+                <label class="form-label small">Công Nhân Tham Gia (Tên, Số điện thoại):</label>
+                <textarea class="form-control form-control-sm" id="baocao_congnhan" rows="3" placeholder="VD: Nguyễn Văn A (0987654321)&#10;Trần Thị B (0912345678)"></textarea>
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label small">Tổng Nhân Lực:</label>
+                <input type="number" class="form-control form-control-sm" id="baocao_nhanluchiện" placeholder="Số người" min="0">
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label small">Tổng Giờ Công:</label>
+                <input type="number" class="form-control form-control-sm" id="baocao_gioconv" placeholder="Giờ công" min="0" step="0.5">
+            </div>
+        </div>
+
+        <!-- PHẦN 3: CÔNG VIỆC ĐÃ LÀM -->
+        <div class="section-title"><i class="fa-solid fa-list-check"></i> 3. Công Việc Đã Hoàn Thành</div>
+        <div class="row g-2 mb-2">
+            <div class="col-12">
+                <label class="form-label small">Mô Tả Công Việc:</label>
+                <textarea class="form-control form-control-sm" id="baocao_motagongviec" rows="4" placeholder="Chi tiết công việc đã làm, tiến độ, kết quả..."></textarea>
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label small">% Tiến Độ:</label>
+                <div class="input-group input-group-sm">
+                    <input type="number" class="form-control" id="baocao_tiendobachram" placeholder="0" min="0" max="100" value="0">
+                    <span class="input-group-text">%</span>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label small">Trạng Thái:</label>
+                <select class="form-select form-select-sm" id="baocao_trangthai">
+                    <option value="">-- Chọn --</option>
+                    <option value="Đang thực hiện">🔄 Đang thực hiện</option>
+                    <option value="Tạm dừng">⏸️ Tạm dừng</option>
+                    <option value="Hoàn thành">✅ Hoàn thành</option>
+                    <option value="Chờ phê duyệt">⏳ Chờ phê duyệt</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- PHẦN 4: VẤN ĐỀ / KHÓ KHĂN -->
+        <div class="section-title"><i class="fa-solid fa-triangle-exclamation"></i> 4. Vấn Đề / Khó Khăn / Đề Xuất</div>
+        <div class="row g-2 mb-2">
+            <div class="col-12">
+                <textarea class="form-control form-control-sm" id="baocao_vandedexuat" rows="3" placeholder="Ghi các vấn đề, khó khăn gặp phải, hoặc đề xuất cải tiến..."></textarea>
+            </div>
+        </div>
+
+        <!-- PHẦN 5: ẢNH CÔNG TRƯỜNG -->
+        <div class="section-title"><i class="fa-solid fa-images"></i> 5. Ảnh Toàn Cảnh Công Trường</div>
+        <div class="row g-2 mb-2">
+            <div class="col-12">
+                <div class="sub-photo-box">
+                    <label class="form-label small text-primary fw-bold mb-1"><i class="fa-solid fa-camera"></i> Ảnh tiến độ công trường:</label>
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <input class="form-control form-control-sm no-print" type="file" id="baocao_anh" accept="image/*" multiple onchange="handleImageUpload(event, 'baocao_anh', 'baocao_anhPreview')" style="flex: 1;">
+                        <button type="button" class="photo-capture-btn" onclick="openCameraModal('baocao_anh', 'baocao_anhPreview')">
+                            <i class="fa-solid fa-camera"></i> Chụp
+                        </button>
+                    </div>
+                    <div id="baocao_anhPreview" class="d-flex flex-wrap gap-2 mt-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PHẦN 6: CHỮ KÝ -->
+        <div class="section-title"><i class="fa-solid fa-pen-fancy"></i> 6. Xác Nhận Chữ Ký</div>
+        <div class="row g-2 mb-2">
+            <div class="col-12 col-md-6 text-center">
+                <p class="small fw-bold text-primary">Kỹ thuật viên / Người lập báo cáo:</p>
+                <canvas id="baocao_kyThuthuVien" class="sig-canvas"></canvas>
+                <input type="text" class="form-control form-control-sm mt-2 text-center" id="baocao_tenKyThuthuVien" placeholder="Ký tên">
+                <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="clearSignature('baocao_kyThuthuVien')">
+                    <i class="fa-solid fa-trash"></i> Xóa chữ ký
+                </button>
+            </div>
+            <div class="col-12 col-md-6 text-center">
+                <p class="small fw-bold text-primary">Chủ đầu tư / Chủ hộ:</p>
+                <canvas id="baocao_kyChudauTu" class="sig-canvas"></canvas>
+                <input type="text" class="form-control form-control-sm mt-2 text-center" id="baocao_tenChudauTu" placeholder="Ký tên">
+                <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="clearSignature('baocao_kyChudauTu')">
+                    <i class="fa-solid fa-trash"></i> Xóa chữ ký
+                </button>
+            </div>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="row g-2 mb-3 mt-3 no-print">
+            <div class="col-12 d-flex justify-content-center gap-2 flex-wrap">
+                <button type="button" class="btn btn-info btn-sm px-3" onclick="previewTabReport('baocao')"><i class="fa-solid fa-eye"></i> Xem trước</button>
+                <button type="button" class="btn btn-success btn-sm px-3" onclick="shareViaZalo('baocao')"><i class="fa-brands fa-square-whatsapp"></i> Gửi Zalo</button>
+                <button type="button" class="btn btn-danger btn-sm px-3" onclick="exportTabToPDF('baocao')"><i class="fa-solid fa-file-pdf"></i> Xuất PDF</button>
+                <button type="button" class="btn btn-primary btn-sm px-3" onclick="exportTabToDocx('baocao')"><i class="fa-solid fa-file-word"></i> Xuất Word</button>
+                <button type="button" class="btn btn-outline-success btn-sm px-3" onclick="saveTabForm('baocao')"><i class="fa-solid fa-bookmark"></i> Lưu vào danh sách</button>
+            </div>
+        </div>
+    </form>
+    </div> <!-- /tab-baocao -->
+
 </div>
 
 <!-- MODAL: HƯỚNG DẪN SỬ DỤNG -->
@@ -2480,7 +2988,7 @@
 
     // ===================== TAB CHUYỂN ĐỔI (Khảo sát / Bảo trì / Bảo hành / Bàn giao / Làm việc) =====================
     function showTab(tabKey) {
-        ['khaosat', 'baotri', 'baohanh', 'bangiao', 'lamviec'].forEach(k => {
+        ['khaosat', 'baotri', 'baohanh', 'bangiao', 'lamviec', 'baocao'].forEach(k => {
             const pane = document.getElementById('tab-' + k);
             if (pane) pane.style.display = (k === tabKey) ? '' : 'none';
         });
@@ -2522,11 +3030,16 @@
             fields: ['lv-execDate','lv-address','lv-custName','lv-content','lv-conclusion'],
             tables: { tasks: { bodyId: 'lv-tasks-body' } },
             photoField: 'lv-photos', photoPreview: 'lv-photoPreview', units: true
+        },
+        baocao: {
+            title: 'BÁO CÁO CÔNG VIỆC HÀNG NGÀY', code: 'BCCV', custField: 'baocao_diadiem', dateField: 'baocao_ngay',
+            fields: ['baocao_ngay','baocao_nguoilap','baocao_diadiem','baocao_thoitiet','baocao_congnhan','baocao_nhanluchiện','baocao_gioconv','baocao_motagongviec','baocao_tiendobachram','baocao_trangthai','baocao_vandedexuat','baocao_tenKyThuthuVien','baocao_tenChudauTu'],
+            photoField: 'baocao_anh', photoPreview: 'baocao_anhPreview', sigA: 'baocao_kyThuthuVien', sigB: 'baocao_kyChudauTu'
         }
     };
 
-    let tabPhotos = { baotri: [], baohanh: [], bangiao: [], lamviec: [] };
-    let tabCurrentRecordId = { baotri: null, baohanh: null, bangiao: null, lamviec: null };
+    let tabPhotos = { baotri: [], baohanh: [], bangiao: [], lamviec: [], baocao: [] };
+    let tabCurrentRecordId = { baotri: null, baohanh: null, bangiao: null, lamviec: null, baocao: null };
     let tabSaveTimer = {};
 
     // ---------- Bảng động: thêm/xóa dòng ----------
@@ -3315,7 +3828,7 @@
 
     // Chỉ hỏi khôi phục nháp của 1 tab khi người dùng THỰC SỰ mở tab đó lần đầu trong phiên này
     // (tránh dồn dập nhiều hộp thoại xác nhận ngay khi vừa mở trang).
-    const _tabVisited = { baotri: false, baohanh: false, bangiao: false, lamviec: false };
+    const _tabVisited = { baotri: false, baohanh: false, bangiao: false, lamviec: false, baocao: false };
     const _origShowTab = showTab;
     showTab = function(tabKey) {
         _origShowTab(tabKey);
@@ -3498,7 +4011,12 @@
                 }, 3600000);
             },
             err => {
-                console.log('❌ Service Worker registration failed:', err);
+                // Service Worker không thể load (sw.js chưa upload hoặc 404)
+                console.warn('⚠️ Service Worker chưa được setup (sw.js chưa upload)');
+                console.log('💡 Để bật offline support + auto-update, upload sw.js lên GitHub');
+            },
+            err => {
+                console.error('❌ Service Worker error:', err);
             }
         );
     }
@@ -3583,6 +4101,330 @@
         `;
         toast.textContent = message;
         document.body.appendChild(toast);
+    }
+
+    // ========== SETTINGS MODAL - Company Info + Share Link Setup ==========
+    function openSettingsModal() {
+        const savedLink = localStorage.getItem('shareAppLink') || '';
+
+        const modal = document.createElement('div');
+        modal.id = 'settingsModal';
+        modal.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+            z-index: 2500; padding: 10px;
+        `;
+        modal.innerHTML = `
+            <div style="background: white; border-radius: 14px; padding: 28px; max-width: 550px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h4 style="margin: 0; color: var(--brand-navy);">⚙️ Cài Đặt Ứng Dụng</h4>
+                    <button type="button" onclick="closeSettingsModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999;">×</button>
+                </div>
+
+                <!-- SECTION 1: Company Logo & Info -->
+                <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #e3e9f2;">
+                    <h6 style="color: var(--brand-navy); font-weight: 700; margin-bottom: 14px;">📋 Thông Tin Công Ty</h6>
+
+                    <div style="margin-bottom: 14px;">
+                        <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; color: #3b5578;">Logo Công Ty:</label>
+                        <div style="display: flex; gap: 10px; align-items: flex-start;">
+                            <input type="file" class="form-control form-control-sm" id="settingsLogoInput" accept="image/*" onchange="handleLogoChange(event)" style="flex: 1;">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="restoreDefaultLogo()">
+                                <i class="fa-solid fa-rotate-left"></i> Mặc định
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                        <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; color: #3b5578;">Tên Công Ty:</label>
+                        <input type="text" class="form-control form-control-sm" id="settingsCompanyName" value="CÔNG TY TNHH NĂNG LƯỢNG NGỌC LONG">
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                        <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; color: #3b5578;">Điện Thoại Liên Hệ:</label>
+                        <input type="text" class="form-control form-control-sm" id="settingsCompanyContact" value="0865 235 569">
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; color: #3b5578;">Mã Số Thuế:</label>
+                        <input type="text" class="form-control form-control-sm" id="settingsCompanyTax" value="0201986311">
+                    </div>
+                </div>
+
+                <!-- SECTION 2: Share Link Setup -->
+                <div style="margin-bottom: 20px;">
+                    <h6 style="color: var(--brand-navy); font-weight: 700; margin-bottom: 14px;">🔗 Link Chia Sẻ Ứng Dụng</h6>
+
+                    <div style="background: #f0f7ff; border: 1px solid #c9d6ea; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+                        <p style="margin: 0; font-size: 0.85rem; color: #333;">
+                            Dán link GitHub Pages (chỉ cần 1 lần). Khi bấm "Chia sẻ", link này sẽ được gửi qua Zalo.
+                        </p>
+                    </div>
+
+                    <input type="text" class="form-control form-control-sm" id="shareAppLinkInput" placeholder="VD: https://username.github.io/khao_sat_dmt.html" value="${savedLink}" style="margin-bottom: 10px;">
+
+                    <small style="color: #666; display: block; margin-bottom: 12px;">
+                        <i class="fa-solid fa-circle-info"></i> Lấy link từ GitHub Pages của bạn
+                    </small>
+                </div>
+
+                <!-- Buttons -->
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="closeSettingsModal()">Huỷ</button>
+                    <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveSettings()">
+                        <i class="fa-solid fa-floppy-disk"></i> Lưu Cài Đặt
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.addEventListener('click', e => {
+            if (e.target === modal) closeSettingsModal();
+        });
+    }
+
+    function closeSettingsModal() {
+        const modal = document.getElementById('settingsModal');
+        if (modal) modal.remove();
+    }
+
+    function saveSettings() {
+        const companyName = document.getElementById('settingsCompanyName').value || 'NGỌC LONG SOLAR';
+        const companyContact = document.getElementById('settingsCompanyContact').value || '0865 235 569';
+        const companyTax = document.getElementById('settingsCompanyTax').value || '0201986311';
+        const shareLink = document.getElementById('shareAppLinkInput').value.trim();
+
+        // Lưu vào localStorage
+        localStorage.setItem('companyName', companyName);
+        localStorage.setItem('companyContact', companyContact);
+        localStorage.setItem('companyTax', companyTax);
+
+        if (shareLink) {
+            localStorage.setItem('shareAppLink', shareLink);
+        }
+
+        // Update header
+        document.getElementById('headerCompanyName').textContent = companyName;
+        document.getElementById('headerCompanyContact').textContent = companyContact;
+
+        // Update form fields
+        document.getElementById('companyName').value = companyName;
+        document.getElementById('companyContact').value = companyContact;
+        document.getElementById('companyTaxCode').value = companyTax;
+
+        closeSettingsModal();
+        showToast('✅ Cài đặt đã được lưu!', 'success');
+    }
+
+    // ========== SHARE APP FEATURE ==========
+    function shareApp() {
+        const shareLink = localStorage.getItem('shareAppLink');
+
+        if (!shareLink) {
+            alert('⚠️ Chưa cấu hình link chia sẻ!\n\nBấm nút "Cài đặt" để dán link GitHub Pages của bạn.');
+            return;
+        }
+
+        const companyName = localStorage.getItem('companyName') || 'Ngọc Long Solar';
+        const message = `Cài đặt ứng dụng Khảo Sát ĐMT của ${companyName}:\n${shareLink}`;
+
+        // Cách 1: Web Share API (hỗ trợ Android, iPhone)
+        if (navigator.share) {
+            navigator.share({
+                title: 'Ứng Dụng Khảo Sát ĐMT',
+                text: message,
+                url: shareLink
+            }).catch(err => {
+                console.log('Share failed:', err);
+                // Fallback: Zalo deeplink
+                openZaloShare(message, shareLink);
+            });
+        } else {
+            // Fallback: Zalo deeplink
+            openZaloShare(message, shareLink);
+        }
+    }
+
+    function openZaloShare(message, link) {
+        const encodedMessage = encodeURIComponent(message);
+        const encodedLink = encodeURIComponent(link);
+
+        // Zalo deeplink (khi cài Zalo)
+        const zaloUrl = `https://zalo.me/?text=${encodedMessage}&url=${encodedLink}`;
+
+        // Nếu không có Zalo, mở link web
+        if (typeof window !== 'undefined') {
+            // Thử mở Zalo app
+            window.open(`zalo://open`, '_blank');
+            // Sau đó mở web link
+            setTimeout(() => {
+                window.open(zaloUrl, '_blank');
+            }, 500);
+        }
+    }
+
+    function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        const bgColor = type === 'success' ? '#28a745' : '#0d6efd';
+        toast.style.cssText = `
+            position: fixed; bottom: 20px; right: 20px;
+            background: ${bgColor}; color: white; padding: 14px 18px;
+            border-radius: 8px; z-index: 2000; font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: 600;
+        `;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Load settings on page load (Safe with null checks)
+    function loadCompanySettings() {
+        const companyName = localStorage.getItem('companyName') || 'NGỌC LONG SOLAR';
+        const companyContact = localStorage.getItem('companyContact') || '0865 235 569';
+        const companyTax = localStorage.getItem('companyTax') || '0201986311';
+
+        // Update header (always visible)
+        const headerName = document.getElementById('headerCompanyName');
+        const headerContact = document.getElementById('headerCompanyContact');
+        if (headerName) headerName.textContent = companyName;
+        if (headerContact) headerContact.textContent = companyContact;
+
+        // Update form fields (only when form is visible)
+        const nameInput = document.getElementById('companyName');
+        const contactInput = document.getElementById('companyContact');
+        const taxInput = document.getElementById('companyTaxCode');
+
+        if (nameInput) nameInput.value = companyName;
+        if (contactInput) contactInput.value = companyContact;
+        if (taxInput) taxInput.value = companyTax;
+
+        // Set ngày báo cáo to today
+        const baocaoNgay = document.getElementById('baocao_ngay');
+        if (baocaoNgay) {
+            const today = new Date().toISOString().split('T')[0];
+            baocaoNgay.value = today;
+        }
+
+        // Initialize signature pads for baocao
+        setTimeout(() => {
+            if (document.getElementById('baocao_kyThuthuVien')) {
+                initSignaturePad('baocao_kyThuthuVien');
+                initSignaturePad('baocao_kyChudauTu');
+            }
+        }, 100);
+    }
+
+    // Load when page ready
+    window.addEventListener('load', loadCompanySettings);
+
+    // Also load when module starts (form becomes visible)
+    const originalStartModule = window.startModule;
+    window.startModule = function(moduleName) {
+        originalStartModule(moduleName);
+        setTimeout(loadCompanySettings, 100);
+    };
+
+    // ========== WELCOME SCREEN & MODULE SELECTION ==========
+    function startModule(moduleName) {
+        // Ẩn welcome screen
+        document.getElementById('welcomeScreen').style.display = 'none';
+        // Hiện main container
+        document.getElementById('mainContainer').style.display = 'block';
+        // Chuyển sang tab đã chọn
+        showTab(moduleName);
+    }
+
+    // ========== CAMERA FUNCTIONALITY ==========
+    let cameraStream = null;
+    let currentCameraDevice = 'user'; // 'user' = front, 'environment' = back
+    let currentInputId = '';
+    let currentPreviewContainerId = '';
+
+    function openCameraModal(inputId, previewContainerId) {
+        currentInputId = inputId;
+        currentPreviewContainerId = previewContainerId;
+
+        const modal = document.getElementById('cameraModal');
+        modal.classList.add('show');
+
+        // Khởi tạo camera
+        if (!cameraStream) {
+            startCamera();
+        }
+    }
+
+    function closeCameraModal() {
+        const modal = document.getElementById('cameraModal');
+        modal.classList.remove('show');
+        stopCamera();
+    }
+
+    async function startCamera() {
+        try {
+            const constraints = {
+                video: {
+                    facingMode: currentCameraDevice
+                }
+            };
+
+            cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+            const video = document.getElementById('cameraVideo');
+            video.srcObject = cameraStream;
+        } catch (err) {
+            console.error('Camera error:', err);
+            alert('⚠️ Không thể truy cập camera.\n\nVui lòng kiểm tra:\n• Quyền truy cập camera (Settings)\n• Browser hỗ trợ camera\n• Kết nối HTTPS');
+            closeCameraModal();
+        }
+    }
+
+    function stopCamera() {
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop());
+            cameraStream = null;
+        }
+    }
+
+    async function switchCamera() {
+        currentCameraDevice = currentCameraDevice === 'user' ? 'environment' : 'user';
+        stopCamera();
+        await startCamera();
+    }
+
+    function capturePhoto() {
+        const video = document.getElementById('cameraVideo');
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0);
+
+        // Convert canvas to blob
+        canvas.toBlob(blob => {
+            const file = new File([blob], `photo_${Date.now()}.jpg`, { type: 'image/jpeg' });
+
+            // Add to file input (for handleImageUpload)
+            const inputElement = document.getElementById(currentInputId);
+            const dataTransfer = new DataTransfer();
+
+            // Keep existing files
+            if (inputElement.files && inputElement.files.length > 0) {
+                for (let i = 0; i < inputElement.files.length; i++) {
+                    dataTransfer.items.add(inputElement.files[i]);
+                }
+            }
+
+            // Add new photo
+            dataTransfer.items.add(file);
+            inputElement.files = dataTransfer.files;
+
+            // Trigger change event
+            const event = new Event('change', { bubbles: true });
+            inputElement.dispatchEvent(event);
+
+            // Visual feedback
+            showToast('✅ Ảnh đã được chụp!', 'success');
+        }, 'image/jpeg', 0.95);
     }
 </script>
 
