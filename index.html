@@ -2866,33 +2866,46 @@
                 y = end;
             }
 
-            // Dựng ảnh toàn bộ báo cáo (giảm độ phân giải nếu quá dài để tránh hết bộ nhớ điện thoại)
-            const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent);
-            const maxPx = isIOS ? 14e6 : 30e6;
-            const scale = Math.max(0.6, Math.min(2, Math.sqrt(maxPx / (contentWpx * totalH))));
-            const canvas = await window.html2canvas(body, {
-                scale: scale, useCORS: true, backgroundColor: '#ffffff', logging: false,
-                width: contentWpx, height: totalH, windowWidth: contentWpx, windowHeight: totalH, scrollX: 0, scrollY: 0
-            });
-
+            // Dựng ảnh theo từng cụm vài trang: giữ độ nét đầy đủ dù báo cáo dài/nhiều ảnh,
+            // mà không vượt giới hạn bộ nhớ ảnh của điện thoại (iPhone ~16 triệu điểm ảnh/ảnh).
+            const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            const maxPx = isIOS ? 12e6 : 24e6;
+            // Báo cáo dài (> 8 trang) dùng 1.5x (~144 dpi, vẫn in rõ) để tạo nhanh hơn trên điện thoại
+            const scale = (totalH > pageHpx * 8) ? 1.5 : 2;
+            const maxChunkH = Math.max(pageHpx + 10, Math.floor(maxPx / (contentWpx * scale * scale)));
             const jsPDF = window.jspdf.jsPDF;
             const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
-            const k = canvas.width / contentWpx;
-            for (let i = 0; i < cuts.length - 1; i++) {
-                const sy = Math.round(cuts[i] * k);
-                const sh = Math.max(1, Math.round((cuts[i + 1] - cuts[i]) * k));
-                const part = document.createElement('canvas');
-                part.width = canvas.width;
-                part.height = sh;
-                const ctx = part.getContext('2d');
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(0, 0, part.width, sh);
-                ctx.drawImage(canvas, 0, sy, canvas.width, sh, 0, 0, canvas.width, sh);
-                if (i > 0) pdf.addPage();
-                pdf.addImage(part.toDataURL('image/jpeg', 0.92), 'JPEG', m.left, m.top, contentWmm, (cuts[i + 1] - cuts[i]) / MM);
-                part.width = part.height = 0;
+            let first = true;
+            let i = 0;
+            while (i < cuts.length - 1) {
+                let j = i + 1;
+                while (j < cuts.length - 1 && (cuts[j + 1] - cuts[i]) <= maxChunkH) j++;
+                const y0 = cuts[i];
+                const chunkH = Math.ceil(cuts[j] - y0);
+                const canvas = await window.html2canvas(body, {
+                    scale: scale, useCORS: true, backgroundColor: '#ffffff', logging: false,
+                    x: 0, y: y0, width: contentWpx, height: chunkH,
+                    windowWidth: contentWpx, windowHeight: totalH, scrollX: 0, scrollY: 0
+                });
+                const k = canvas.width / contentWpx;
+                for (let pIdx = i; pIdx < j; pIdx++) {
+                    const sy = Math.round((cuts[pIdx] - y0) * k);
+                    const sh = Math.max(1, Math.min(canvas.height - sy, Math.round((cuts[pIdx + 1] - cuts[pIdx]) * k)));
+                    const part = document.createElement('canvas');
+                    part.width = canvas.width;
+                    part.height = sh;
+                    const ctx = part.getContext('2d');
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, part.width, sh);
+                    ctx.drawImage(canvas, 0, sy, canvas.width, sh, 0, 0, canvas.width, sh);
+                    if (!first) pdf.addPage();
+                    first = false;
+                    pdf.addImage(part.toDataURL('image/jpeg', 0.9), 'JPEG', m.left, m.top, contentWmm, (cuts[pIdx + 1] - cuts[pIdx]) / MM);
+                    part.width = part.height = 0;
+                }
+                canvas.width = canvas.height = 0;
+                i = j;
             }
-            canvas.width = canvas.height = 0;
             return pdf.output('blob');
         } finally {
             if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
