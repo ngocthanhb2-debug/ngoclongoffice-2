@@ -218,9 +218,13 @@
         }
         .welcome-modules {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
             margin-bottom: 20px;
+            align-items: stretch;
+        }
+        @media (min-width: 600px) {
+            .welcome-modules { grid-template-columns: repeat(4, 1fr); }
         }
         .welcome-module-btn {
             background: rgba(255, 255, 255, 0.15);
@@ -644,16 +648,6 @@
         <div class="welcome-title">NL Office</div>
         <div class="welcome-subtitle">Quản lý dự án điện mặt trời<br>chuyên nghiệp & hiệu quả</div>
 
-        <div class="welcome-guide">
-            <h4>📋 Hướng Dẫn Sử Dụng:</h4>
-            <ul>
-                <li><strong>Chụp ảnh:</strong> Bấm nút 📷 để chụp ảnh trực tiếp từ camera</li>
-                <li><strong>Điền thông tin:</strong> Nhập dữ liệu dự án & khách hàng</li>
-                <li><strong>Xem trước & xuất:</strong> PDF, Word hoặc Zalo — tự động lưu vào mục Lưu Trữ</li>
-                <li><strong>Offline:</strong> Dữ liệu tự động lưu trên máy, hoạt động offline</li>
-            </ul>
-        </div>
-
         <div class="welcome-modules">
             <button type="button" class="welcome-module-btn" onclick="startModule('khaosat')">
                 <span class="welcome-module-icon">🔍</span>
@@ -688,6 +682,15 @@
                 Lưu Trữ
             </button>
         </div>
+        <div class="welcome-guide" style="margin-top:22px;">
+            <h4>📋 Hướng Dẫn Nhanh:</h4>
+            <ul>
+                <li><strong>Chụp ảnh:</strong> bấm nút <b>Chụp</b> ở mỗi mục ảnh (hoặc "Camera máy")</li>
+                <li><strong>Tự lưu:</strong> phiếu đang nhập tự lưu trên máy, mở lại app vẫn còn</li>
+                <li><strong>Xuất file:</strong> PDF, Word hoặc Gửi Zalo — bản xuất tự vào mục Lưu Trữ</li>
+                <li><strong>Không mạng:</strong> dùng được sau khi đã mở app 1 lần lúc có mạng</li>
+            </ul>
+        </div>
     </div>
 </div>
 
@@ -699,7 +702,8 @@
             <button type="button" class="camera-close-btn" onclick="closeCameraModal()">×</button>
         </div>
         <div class="camera-content">
-            <video id="cameraVideo" autoplay playsinline></video>
+            <video id="cameraVideo" autoplay playsinline muted></video>
+            <div id="cameraMsg" style="display:none;color:#fff;padding:16px;text-align:center;font-size:.95rem;"></div>
         </div>
         <div class="camera-controls">
             <button type="button" class="camera-capture" onclick="capturePhoto()">
@@ -707,6 +711,9 @@
             </button>
             <button type="button" class="camera-switch" onclick="switchCamera()">
                 <i class="fa-solid fa-arrow-right-arrow-left"></i> Chuyển Camera
+            </button>
+            <button type="button" class="camera-switch" onclick="useNativeCamera()">
+                <i class="fa-solid fa-mobile-screen"></i> Camera máy
             </button>
             <button type="button" class="camera-close" onclick="closeCameraModal()">
                 <i class="fa-solid fa-xmark"></i> Đóng
@@ -734,6 +741,9 @@
             </div>
         </div>
         <div class="app-header-actions">
+            <button type="button" class="btn btn-sm" onclick="backToHome()" title="Về màn hình chính">
+                <i class="fa-solid fa-house"></i> Trang chủ
+            </button>
             <button type="button" class="btn btn-sm" onclick="openSettingsModal()" title="Cài đặt công ty & link chia sẻ">
                 <i class="fa-solid fa-gear"></i> Cài đặt
             </button>
@@ -756,11 +766,6 @@
 
     
     <div id="tab-guide" class="tab-pane">
-        <div class="back-to-home-btn-container">
-            <button class="btn btn-outline-secondary btn-sm" onclick="backToHome()" title="Quay lại màn hình chính">
-                <i class="fa-solid fa-arrow-left"></i> Quay Lại
-            </button>
-        </div>
         <div class="container-fluid py-5">
             <div class="row">
                 <div class="col-md-8 offset-md-2">
@@ -825,7 +830,11 @@
                         </div>
                         <div class="card-body">
                             <ul>
-                                <li class="mb-2">Lữu trữ tự động: Mỗi lần xuất PDF hoặc gửi Zalo, bản sao sẽ được lưu trong "Lưu Trữ"</li>
+                                <li class="mb-2">Lưu trữ tự động: mỗi lần Xuất PDF, Xuất Word hoặc Gửi Zalo, file sẽ được lưu trong "Lưu Trữ" (tự xóa sau 1 năm)</li>
+                                <li class="mb-2">Tự lưu phiếu đang làm: nội dung đang nhập được tự lưu trên máy. Bấm "Phiếu mới" khi bắt đầu công trình khác</li>
+                                <li class="mb-2">Gửi Zalo: sau khi tạo file, bấm "Gửi Zalo / Chia sẻ" rồi chọn Zalo trong danh sách ứng dụng</li>
+                                <li class="mb-2">Lần đầu xuất PDF/Word cần có mạng để tải công cụ tạo file; các lần sau dùng được khi mất sóng</li>
+                                <li class="mb-2">iPhone: nên "Thêm vào MH chính" (nút Chia sẻ của Safari) và mở app từ biểu tượng để dữ liệu không bị iPhone tự xóa</li>
                                 <li class="mb-2">Lịch sử: Truy cập tab "Lưu Trữ" để xem, lọc, hoặc tải lại các bản cũ</li>
                                 <li class="mb-2">Chia sẻ: Sử dụng nút "Gửi Zalo" để chia sẻ trực tiếp với khách hàng</li>
                                 <li class="mb-2">Ảnh chất lượng: Chụp ảnh rõ nét dưới ánh sáng tốt để đảm bảo chất lượng PDF</li>
@@ -835,7 +844,7 @@
                     
                     <div class="alert alert-warning" role="alert">
                         <i class="fa-solid fa-info-circle"></i> 
-                        <strong>Lưu ý:</strong> Ứng dụng lưu dữ liệu trên thiết bị của bạn. Hãy định kỳ xuất PDF hoặc gửi Zalo để sao lưu.
+                        <strong>Lưu ý:</strong> Dữ liệu chỉ lưu trên điện thoại này (không tự đồng bộ sang máy khác). Xóa dữ liệu trình duyệt sẽ mất Lưu Trữ — hãy gửi Zalo các phiếu quan trọng để có bản sao.
                     </div>
                 </div>
             </div>
@@ -1196,7 +1205,7 @@
             <button type="button" class="btn btn-danger btn-sm px-3 me-2" onclick="exportToPDF()">
                 <i class="fa-solid fa-file-pdf"></i> Xuất PDF
             </button>
-            <button type="button" class="btn btn-primary btn-sm px-3" onclick="archiveKhaosat('word');exportToDocx()">
+            <button type="button" class="btn btn-primary btn-sm px-3" onclick="exportToDocx()">
                 <i class="fa-solid fa-file-word"></i> Xuất Word
             </button>
         </div>
@@ -1611,7 +1620,7 @@
                 <div class="sub-photo-box">
                     <label class="form-label small text-primary fw-bold mb-1"><i class="fa-solid fa-camera"></i> Ảnh tiến độ công trường:</label>
                     <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-                        <input class="form-control form-control-sm no-print" type="file" id="baocao_anh" accept="image/*" multiple onchange="handleImageUpload(event, 'baocao_anh', 'baocao_anhPreview')" style="flex: 1;">
+                        <input class="form-control form-control-sm no-print" type="file" id="baocao_anh" accept="image/*" multiple onchange="handleTabPhotoUpload(event, 'baocao')" style="flex: 1;">
                         <button type="button" class="photo-capture-btn" onclick="openCameraModal('baocao_anh', 'baocao_anhPreview')">
                             <i class="fa-solid fa-camera"></i> Chụp
                         </button>
@@ -1626,7 +1635,7 @@
         <div class="row g-2 mb-2">
             <div class="col-12 col-md-6 text-center">
                 <p class="small fw-bold text-primary">Kỹ thuật viên / Người lập báo cáo:</p>
-                <canvas id="baocao_kyThuthuVien" class="sig-canvas"></canvas>
+                <canvas id="baocao_kyThuthuVien" class="sig-canvas" width="600" height="220"></canvas>
                 <input type="text" class="form-control form-control-sm mt-2 text-center" id="baocao_tenKyThuthuVien" placeholder="Ký tên">
                 <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="clearSignature('baocao_kyThuthuVien')">
                     <i class="fa-solid fa-trash"></i> Xóa chữ ký
@@ -1634,7 +1643,7 @@
             </div>
             <div class="col-12 col-md-6 text-center">
                 <p class="small fw-bold text-primary">Chủ đầu tư / Chủ hộ:</p>
-                <canvas id="baocao_kyChudauTu" class="sig-canvas"></canvas>
+                <canvas id="baocao_kyChudauTu" class="sig-canvas" width="600" height="220"></canvas>
                 <input type="text" class="form-control form-control-sm mt-2 text-center" id="baocao_tenChudauTu" placeholder="Ký tên">
                 <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="clearSignature('baocao_kyChudauTu')">
                     <i class="fa-solid fa-trash"></i> Xóa chữ ký
@@ -1645,6 +1654,7 @@
         <!-- BUTTONS -->
         <div class="row g-2 mb-3 mt-3 no-print">
             <div class="col-12 d-flex justify-content-center gap-2 flex-wrap">
+                <button type="button" class="btn btn-outline-secondary btn-sm px-3" onclick="newTabReport('baocao')"><i class="fa-solid fa-file-circle-plus"></i> Phiếu mới</button>
                 <button type="button" class="btn btn-info btn-sm px-3" onclick="openTabPreview('baocao')"><i class="fa-solid fa-eye"></i> Xem trước</button>
                 <button type="button" class="btn btn-success btn-sm px-3" onclick="shareTabViaPdf('baocao')"><i class="fa-brands fa-square-whatsapp"></i> Gửi Zalo</button>
                 <button type="button" class="btn btn-danger btn-sm px-3" onclick="exportTabToPDF('baocao')"><i class="fa-solid fa-file-pdf"></i> Xuất PDF</button>
@@ -1656,11 +1666,6 @@
     <!-- TAB: LƯU TRỮ (ARCHIVE) -->
     
     <div id="tab-archive" class="tab-pane" style="display:none;">
-        <div class="back-to-home-btn-container">
-            <button class="btn btn-outline-secondary btn-sm" onclick="backToHome()" title="Quay lại màn hình chính">
-                <i class="fa-solid fa-arrow-left"></i> Quay Lại
-            </button>
-        </div>
         <div class="container-fluid py-4">
             <h3 class="mb-4"><i class="fa-solid fa-server"></i> Lưu Trữ Phiếu</h3>
             <div id="archive-list-container">
@@ -2042,7 +2047,7 @@
         const c = document.getElementById('logoDisplayContainer');
         if (!c) return;
         c.innerHTML = logoDataURL
-            ? `<img src="${logoDataURL}" style="max-width: 120px; max-height: 50px; object-fit: contain;" loading="lazy" />`
+            ? `<img src="${logoDataURL}" style="max-width: 120px; max-height: 50px; object-fit: contain;" />`
             : '<span class="text-muted small fst-italic">[Chưa có Logo]</span>';
     }
 
@@ -2082,6 +2087,7 @@
 
     // Vẽ lại toàn bộ ảnh xem trước của một mục từ dữ liệu (kèm ô ghi chú và nút xóa)
     function renderImagePreviews(inputId) {
+        markDirty('khaosat');
         const containerId = inputId.replace('Images', 'PreviewContainer');
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -2291,6 +2297,8 @@
     // ===================== CHỮ KÝ ĐIỆN TỬ (CANVAS) =====================
     function initSignaturePad(canvasId) {
         const canvas = document.getElementById(canvasId);
+        if (!canvas || canvas.dataset.sigInit === '1') return;
+        canvas.dataset.sigInit = '1';
         const ctx = canvas.getContext('2d');
         ctx.strokeStyle = '#0d1b2a';
         ctx.lineWidth = 2.5;
@@ -2383,10 +2391,10 @@
                     </tr>
                     <tr>
                         <td style="height:85px; vertical-align:bottom; padding:4px;">
-                            ${custSig ? `<img src="${custSig}" style="max-height:75px; max-width:190px;" loading="lazy" />` : '<div style="height:75px;"></div>'}
+                            ${custSig ? `<img src="${custSig}" style="max-height:75px; max-width:190px;" />` : '<div style="height:75px;"></div>'}
                         </td>
                         <td style="height:85px; vertical-align:bottom; padding:4px;">
-                            ${survSig ? `<img src="${survSig}" style="max-height:75px; max-width:190px;" loading="lazy" />` : '<div style="height:75px;"></div>'}
+                            ${survSig ? `<img src="${survSig}" style="max-height:75px; max-width:190px;" />` : '<div style="height:75px;"></div>'}
                         </td>
                     </tr>
                     <tr>
@@ -2439,7 +2447,7 @@
                 ? `<div style="font-size:8pt; font-style:italic; max-width:130px; word-wrap:break-word; margin-top:2px;">${escapeHTML(imgObj.note)}</div>`
                 : '';
             html += `<div style="display:inline-block; margin: 4px; text-align:center; vertical-align:top;">
-                        <img src="${imgObj.src}"${sizeAttr} style="${sizeStyle} border:1px solid #ccc;" loading="lazy" />${noteHtml}
+                        <img src="${imgObj.src}"${sizeAttr} style="${sizeStyle} border:1px solid #ccc;" />${noteHtml}
                     </div>`;
         });
         html += `</div></div>`;
@@ -2494,7 +2502,7 @@
                 <section class="pdf-block pdf-appendix-photo" style="text-align:center;">
                     ${titleHtml}
                     <p style="font-weight:bold; font-size:12pt; margin-bottom:10px;">${caption}</p>
-                    <img src="${src}"${sizeAttr} style="display:block; margin:0 auto; ${sizeStyle} border:1px solid #ccc;" loading="lazy" />${noteHtml}
+                    <img src="${src}"${sizeAttr} style="display:block; margin:0 auto; ${sizeStyle} border:1px solid #ccc;" />${noteHtml}
                 </section>`;
         });
 
@@ -2503,15 +2511,16 @@
 
     function getReportHTML() {
         let gpsVal = document.getElementById('gpsCoordinates').value;
+        const gpsSafe = escapeHTML(gpsVal);
         let googleMapLink = gpsVal ? `https://www.google.com/maps?q=${encodeURIComponent(gpsVal)}` : '#';
 
         let apfcStatusVal = document.getElementById('apfcStatus').value;
-        let apfcDetails = apfcStatusVal === 'Có tủ bù' ? `Có - Thông số: ${document.getElementById('apfcSpecs').value || 'N/A'}` : 'Không có tủ bù';
+        let apfcDetails = apfcStatusVal === 'Có tủ bù' ? `Có - Thông số: ${escVal('apfcSpecs') || 'N/A'}` : 'Không có tủ bù';
 
-        let cName = document.getElementById('companyName').value || '';
-        let cContact = document.getElementById('companyContact').value || '';
-        let cAddress = document.getElementById('companyAddress').value || '';
-        let cTax = document.getElementById('companyTaxCode') ? (document.getElementById('companyTaxCode').value || '') : '';
+        let cName = escVal('companyName');
+        let cContact = escVal('companyContact');
+        let cAddress = escVal('companyAddress');
+        let cTax = escVal('companyTaxCode');
 
         let headerBlock = `
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
@@ -2521,7 +2530,7 @@
                             const lf = logoDims ? fitDimensions(logoDims.width, logoDims.height, 110, 45) : null;
                             const a = lf ? ` width="${lf.w}" height="${lf.h}"` : '';
                             const s = lf ? `width:${lf.w}px; height:${lf.h}px;` : 'max-width:110px; max-height:45px;';
-                            return `<img src="${logoDataURL}"${a} style="${s} object-fit: contain;" loading="lazy" />`;
+                            return `<img src="${logoDataURL}"${a} style="${s} object-fit: contain;" />`;
                         })() : ''}
                     </td>
                     <td style="width: 75%; vertical-align: middle; text-align: left; padding-left: 10px;">
@@ -2550,56 +2559,56 @@
                 <hr/>
 
                 <h3 style="color: #003366; font-size: 11pt; border-bottom: 1px solid #003366; padding-bottom: 3px;">1. Thông tin chung dự án & Khách hàng</h3>
-                <p><b>Tên khách hàng / Doanh nghiệp:</b> ${document.getElementById('custName').value || 'N/A'}</p>
-                <p><b>Mã số thuế / CCCD:</b> ${document.getElementById('custTaxCode').value || 'N/A'}</p>
-                <p><b>Điện thoại:</b> ${document.getElementById('custPhone').value || 'N/A'} | <b>Email:</b> ${document.getElementById('custEmail').value || 'N/A'}</p>
-                <p><b>Địa chỉ trụ sở:</b> ${document.getElementById('custAddress').value || 'N/A'}</p>
-                <p><b>Địa điểm khảo sát thực tế:</b> ${document.getElementById('siteAddress').value || 'N/A'}</p>
-                <p><b>Tọa độ GPS:</b> ${gpsVal ? `<a href="${googleMapLink}" target="_blank">${gpsVal} (Xem Google Maps)</a>` : 'N/A'}</p>
-                <p><b>Phân khúc công trình:</b> ${document.getElementById('projectType').value}</p>
-                <p><b>Công suất dự kiến:</b> ${document.getElementById('estimatedCapacity').value || 'N/A'} kWp</p>
-                <p><b>Mục đích đầu tư:</b> ${document.getElementById('investmentPurpose').value}</p>
-                <p><b>Cán bộ khảo sát:</b> ${document.getElementById('surveyorName').value || 'N/A'} | <b>Đại diện CĐT:</b> ${document.getElementById('clientAccompany').value || 'N/A'}</p>
-                <p><b>Ngày khảo sát:</b> ${document.getElementById('surveyDate').value || 'N/A'}</p>
+                <p><b>Tên khách hàng / Doanh nghiệp:</b> ${escVal('custName') || 'N/A'}</p>
+                <p><b>Mã số thuế / CCCD:</b> ${escVal('custTaxCode') || 'N/A'}</p>
+                <p><b>Điện thoại:</b> ${escVal('custPhone') || 'N/A'} | <b>Email:</b> ${escVal('custEmail') || 'N/A'}</p>
+                <p><b>Địa chỉ trụ sở:</b> ${escVal('custAddress') || 'N/A'}</p>
+                <p><b>Địa điểm khảo sát thực tế:</b> ${escVal('siteAddress') || 'N/A'}</p>
+                <p><b>Tọa độ GPS:</b> ${gpsVal ? `<a href="${googleMapLink}" target="_blank">${gpsSafe} (Xem Google Maps)</a>` : 'N/A'}</p>
+                <p><b>Phân khúc công trình:</b> ${escVal('projectType')}</p>
+                <p><b>Công suất dự kiến:</b> ${escVal('estimatedCapacity') || 'N/A'} kWp</p>
+                <p><b>Mục đích đầu tư:</b> ${escVal('investmentPurpose')}</p>
+                <p><b>Cán bộ khảo sát:</b> ${escVal('surveyorName') || 'N/A'} | <b>Đại diện CĐT:</b> ${escVal('clientAccompany') || 'N/A'}</p>
+                <p><b>Ngày khảo sát:</b> ${escVal('surveyDate') || 'N/A'}</p>
                 </section>
 
                 <section class="pdf-block">
                 <h3 style="color: #003366; font-size: 11pt; border-bottom: 1px solid #003366; padding-bottom: 3px;">2. Khảo sát mặt bằng & Kết cấu mái</h3>
-                <p><b>Loại mái:</b> ${document.getElementById('roofType').value}</p>
-                <p><b>Hướng mái chính:</b> ${document.getElementById('roofDirection').value}</p>
-                <p><b>Độ nghiêng mái:</b> ${document.getElementById('roofSlope').value || 'N/A'}</p>
-                <p><b>Tình trạng che bóng:</b> ${document.getElementById('shadingNote').value || 'Không có ghi chú'}</p>
+                <p><b>Loại mái:</b> ${escVal('roofType')}</p>
+                <p><b>Hướng mái chính:</b> ${escVal('roofDirection')}</p>
+                <p><b>Độ nghiêng mái:</b> ${escVal('roofSlope') || 'N/A'}</p>
+                <p><b>Tình trạng che bóng:</b> ${escVal('shadingNote') || 'Không có ghi chú'}</p>
                 ${renderImagesHTML('Hình ảnh mái nhà', subImages.roofImages)}
                 </section>
 
                 <section class="pdf-block">
                 <h3 style="color: #003366; font-size: 11pt; border-bottom: 1px solid #003366; padding-bottom: 3px;">3. Hạ tầng điện & Tủ điện hiện hữu</h3>
-                <p><b>Loại lưới điện:</b> ${document.getElementById('gridType').value}</p>
-                <p><b>Vị trí đặt Inverter dự kiến:</b> ${document.getElementById('inverterLocation').value || 'N/A'}</p>
+                <p><b>Loại lưới điện:</b> ${escVal('gridType')}</p>
+                <p><b>Vị trí đặt Inverter dự kiến:</b> ${escVal('inverterLocation') || 'N/A'}</p>
                 ${renderImagesHTML('Hình ảnh vị trí đặt Inverter', subImages.inverterImages)}
-                <p><b>Thông tin Đồng hồ điện:</b> ${document.getElementById('meterInfo').value || 'N/A'}</p>
+                <p><b>Thông tin Đồng hồ điện:</b> ${escVal('meterInfo') || 'N/A'}</p>
                 ${renderImagesHTML('Hình ảnh đồng hồ điện', subImages.meterImages)}
-                <p><b>Thông số Tủ điện tổng (MDB):</b> ${document.getElementById('mdbSpecs').value || 'N/A'}</p>
+                <p><b>Thông số Tủ điện tổng (MDB):</b> ${escVal('mdbSpecs') || 'N/A'}</p>
                 ${renderImagesHTML('Hình ảnh tủ điện tổng (MDB)', subImages.mdbImages)}
                 <p><b>Hệ thống Tủ bù Cos phi:</b> ${apfcDetails}</p>
                 ${renderImagesHTML('Hình ảnh tủ bù Cos phi', subImages.apfcImages)}
-                <p><b>Đấu nối AC & Chống sét (SPD):</b> ${document.getElementById('acRouteSpecs').value || 'N/A'} | ${document.getElementById('spdSpecs').value || ''}</p>
+                <p><b>Đấu nối AC & Chống sét (SPD):</b> ${escVal('acRouteSpecs') || 'N/A'} | ${escVal('spdSpecs') || ''}</p>
                 ${renderImagesHTML('Hình ảnh đấu nối AC & SPD', subImages.acConnectImages)}
-                <p><b>Thông số Trạm biến áp:</b> ${document.getElementById('transformerSpecs').value || 'N/A'} | Tải: ${document.getElementById('transformerLoad').value || 'N/A'}</p>
+                <p><b>Thông số Trạm biến áp:</b> ${escVal('transformerSpecs') || 'N/A'} | Tải: ${escVal('transformerLoad') || 'N/A'}</p>
                 ${renderImagesHTML('Hình ảnh trạm biến áp', subImages.transformerImages)}
-                <p><b>Truyền thông & Giám sát:</b> ${document.getElementById('monitoringSpecs').value || 'N/A'}</p>
+                <p><b>Truyền thông & Giám sát:</b> ${escVal('monitoringSpecs') || 'N/A'}</p>
                 ${renderImagesHTML('Hình ảnh thiết bị truyền thông', subImages.monitoringImages)}
                 </section>
 
                 <section class="pdf-block">
                 <h3 style="color: #003366; font-size: 11pt; border-bottom: 1px solid #003366; padding-bottom: 3px; margin-top: 15px;">4. Phương án thi công</h3>
-                <p>${document.getElementById('constructionPlan').value || 'Chưa có ghi chú phương án thi công'}</p>
+                <p>${escVal('constructionPlan') || 'Chưa có ghi chú phương án thi công'}</p>
                 </section>
 
                 <section class="pdf-block">
                     <h3 style="color: #003366; font-size: 11pt; border-bottom: 1px solid #003366; padding-bottom: 3px; margin-top: 15px;">5. Kết luận & Thời gian thi công</h3>
-                    <p><b>Đánh giá kết luận:</b> ${document.getElementById('conclusion').value || 'Chưa có ghi chú kết luận'}</p>
-                    <p><b>Xác nhận thời gian có thể thi công:</b> ${document.getElementById('executionTime').value || 'N/A'}</p>
+                    <p><b>Đánh giá kết luận:</b> ${escVal('conclusion') || 'Chưa có ghi chú kết luận'}</p>
+                    <p><b>Xác nhận thời gian có thể thi công:</b> ${escVal('executionTime') || 'N/A'}</p>
 
                     <h3 style="color: #003366; font-size: 11pt; border-bottom: 1px solid #003366; padding-bottom: 3px; margin-top: 15px;">6. Chữ ký xác nhận</h3>
                     ${renderSignatureBlockHTML()}
@@ -2812,7 +2821,7 @@
             doc.write('<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8">' +
                 '<link href="https://fonts.googleapis.com/css2?family=Tinos:wght@400;700&display=swap" rel="stylesheet">' +
                 '<style>html,body{margin:0;padding:0;background:#fff;}body{width:' + contentWpx + 'px;}' +
-                '.rpt-body{padding:0 !important;}img{max-width:100%;}</style></head><body>' + innerHtml + '</body></html>');
+                '.rpt-body{padding:0 !important;}img{max-width:100%;}</style></head><body>' + String(innerHtml).replace(/\sloading="lazy"/g, '') + '</body></html>');
             doc.close();
 
             // Chờ ảnh và font
@@ -2910,6 +2919,328 @@
             if (confirm('Không tạo được file PDF trực tiếp (' + (err && err.message ? err.message : err) + ').\n\nDùng chế độ In → Lưu thành PDF?')) {
                 try { saveToUnifiedArchive(kind, mode === 'zalo' ? 'zalo' : 'pdf', null, archiveData(kind, fileName)); } catch (e) { }
                 if (isKs) exportToPDFPrint(); else exportTabToPDFPrint(kind);
+            }
+        }
+    }
+
+    // ===================== XUẤT WORD (.docx thật, bố cục giống PDF) =====================
+    // Dựng báo cáo trong khung ẩn (cùng bề rộng với PDF), đọc kích thước/kiểu chữ thực tế của từng phần tử
+    // rồi tạo file .docx chuẩn (đoạn văn, bảng, ảnh) — mở được bằng Word, Google Docs, WPS, Word trên điện thoại.
+    const DOCX_MIME = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    const DOCX_LIB_URLS = [
+        'https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js',
+        'https://unpkg.com/docx@8.5.0/build/index.umd.js'
+    ];
+    async function loadDocxLib() {
+        if (window.docx && window.docx.Document) return;
+        let lastErr = null;
+        for (const url of DOCX_LIB_URLS) {
+            try { await loadScriptOnce(url, function () { return window.docx && window.docx.Document; }); return; }
+            catch (e) { lastErr = e; }
+        }
+        throw lastErr || new Error('Không tải được thư viện tạo file Word (cần có mạng ở lần đầu)');
+    }
+
+    function dxTw(px) { return Math.round(px * 15); }
+    function dxColor(css) {
+        const m = css && css.match(/rgba?\(([^)]+)\)/);
+        if (!m) return null;
+        const p = m[1].split(',').map(function (x) { return parseFloat(x); });
+        if (p.length > 3 && p[3] === 0) return null;
+        return p.slice(0, 3).map(function (v) { return ('0' + Math.round(v).toString(16)).slice(-2); }).join('').toUpperCase();
+    }
+    function dxNum(v) { const n = parseFloat(v); return isNaN(n) ? 0 : n; }
+    function dxBorder(cs, side, D) {
+        const w = dxNum(cs['border' + side + 'Width']);
+        const st = cs['border' + side + 'Style'];
+        if (!w || st === 'none' || st === 'hidden') return { style: D.BorderStyle.NONE, size: 0, color: 'auto' };
+        return { style: D.BorderStyle.SINGLE, size: Math.max(2, Math.round(w * 6)), color: dxColor(cs['border' + side + 'Color']) || '000000' };
+    }
+    function dxIsBlock(el, cx) {
+        if (el.tagName === 'TABLE') return true;
+        const d = cx.win.getComputedStyle(el).display;
+        return d === 'block' || d === 'list-item' || d === 'flex' || d === 'grid' || d === 'flow-root' || d === 'table';
+    }
+    function dxHasBlockChild(el, cx) {
+        return Array.from(el.children).some(function (c) {
+            if (c.tagName === 'STYLE' || c.tagName === 'SCRIPT') return false;
+            return dxIsBlock(c, cx);
+        });
+    }
+    function dxImage(img, cx) {
+        const src = img.getAttribute('src') || '';
+        const mt = src.match(/^data:image\/(png|jpe?g|gif|bmp);base64,(.+)$/i);
+        if (!mt) return null;
+        const bin = atob(mt[2]);
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        const r = img.getBoundingClientRect();
+        let w = Math.round(r.width || img.naturalWidth), h = Math.round(r.height || img.naturalHeight);
+        if (!w || !h) return null;
+        const maxW = Math.max(50, cx.box.right - cx.box.left);
+        if (w > maxW) { h = Math.round(h * maxW / w); w = Math.round(maxW); }
+        const t = /png/i.test(mt[1]) ? 'png' : (/gif/i.test(mt[1]) ? 'gif' : (/bmp/i.test(mt[1]) ? 'bmp' : 'jpg'));
+        return new cx.D.ImageRun({ data: bytes, transformation: { width: w, height: h }, type: t });
+    }
+    // Gom nội dung chữ/ảnh trong 1 phần tử thành danh sách mục (chưa tạo TextRun)
+    function dxInline(node, cx, items, st) {
+        if (node.nodeType === 3) {
+            const par = node.parentElement;
+            const cs = cx.win.getComputedStyle(par);
+            let t = node.nodeValue.replace(/[ \t\r\n\f]+/g, ' ');
+            if (cs.textTransform === 'uppercase') t = t.toUpperCase();
+            if (st.lead) t = t.replace(/^ /, '');
+            if (!t) return;
+            const px = dxNum(cs.fontSize) || 16;
+            const fw = cs.fontWeight;
+            const dec = cs.textDecorationLine || cs.textDecoration || '';
+            const o = {
+                text: t, font: 'Times New Roman', size: Math.max(2, Math.round(px * 1.5)),
+                bold: fw === 'bold' || parseInt(fw, 10) >= 600,
+                italics: cs.fontStyle === 'italic' || cs.fontStyle === 'oblique',
+                color: dxColor(cs.color) || '000000'
+            };
+            if (/underline/.test(dec)) o.underline = { type: cx.D.UnderlineType.SINGLE };
+            items.push({ k: 't', o: o });
+            st.lead = / $/.test(t);
+            return;
+        }
+        if (node.nodeType !== 1) return;
+        const tag = node.tagName;
+        if (tag === 'STYLE' || tag === 'SCRIPT') return;
+        const cs = cx.win.getComputedStyle(node);
+        if (cs.display === 'none') return;
+        if (tag === 'BR') { items.push({ k: 'br' }); st.lead = true; return; }
+        if (tag === 'IMG') {
+            const r = dxImage(node, cx);
+            if (r) { items.push({ k: 'i', r: r }); st.lead = false; }
+            return;
+        }
+        node.childNodes.forEach(function (c) { dxInline(c, cx, items, st); });
+    }
+    function dxMakeRuns(items, cx) {
+        // bỏ khoảng trắng thừa cuối đoạn
+        for (let i = items.length - 1; i >= 0; i--) {
+            if (items[i].k === 't') { items[i].o.text = items[i].o.text.replace(/ $/, ''); if (!items[i].o.text) { items.splice(i, 1); continue; } break; }
+            else break;
+        }
+        return items.map(function (it) {
+            if (it.k === 't') return new cx.D.TextRun(it.o);
+            if (it.k === 'br') return new cx.D.TextRun({ break: 1 });
+            return it.r;
+        });
+    }
+    function dxParagraph(el, items, cx, st) {
+        const D = cx.D, win = cx.win;
+        const cs = win.getComputedStyle(el);
+        const fs = dxNum(cs.fontSize) || 16;
+        const lh = parseFloat(cs.lineHeight);
+        let ratio = isNaN(lh) ? 1.15 : lh / fs;
+        ratio = Math.min(2.2, Math.max(1, ratio));
+        let align = { center: D.AlignmentType.CENTER, right: D.AlignmentType.RIGHT, end: D.AlignmentType.RIGHT, justify: D.AlignmentType.JUSTIFIED }[cs.textAlign] || D.AlignmentType.LEFT;
+        // Word căn đều cả dòng đứng trước dấu xuống dòng -> giãn chữ xấu; dùng căn trái cho đoạn có xuống dòng
+        if (align === D.AlignmentType.JUSTIFIED && items.some(function (i) { return i.k === 'br'; })) align = D.AlignmentType.LEFT;
+        const r = el.getBoundingClientRect();
+        const left = Math.max(0, r.left + dxNum(cs.paddingLeft) + dxNum(cs.borderLeftWidth) - cx.box.left);
+        const right = Math.max(0, cx.box.right - (r.right - dxNum(cs.paddingRight) - dxNum(cs.borderRightWidth)));
+        // Ô bảng / thân trang: viền, lề đã do ô bảng và lề trang xử lý, không tính lại cho đoạn văn
+        const isShell = (el.tagName === 'TD' || el.tagName === 'TH' || el.tagName === 'BODY');
+        const opts = {
+            children: dxMakeRuns(items, cx),
+            alignment: align,
+            spacing: {
+                before: isShell ? 0 : dxTw(dxNum(cs.marginTop) + dxNum(cs.paddingTop)),
+                after: isShell ? 0 : dxTw(dxNum(cs.marginBottom) + dxNum(cs.paddingBottom)),
+                line: Math.round(ratio * 240), lineRule: D.LineRuleType.AUTO
+            },
+            indent: { left: dxTw(isShell ? 0 : (left > 2 ? left : 0)), right: dxTw(isShell ? 0 : (right > 2 ? right : 0)) }
+        };
+        const bb = isShell ? { style: D.BorderStyle.NONE } : dxBorder(cs, 'Bottom', D);
+        const tb = isShell ? { style: D.BorderStyle.NONE } : dxBorder(cs, 'Top', D);
+        if (bb.style !== D.BorderStyle.NONE || tb.style !== D.BorderStyle.NONE) {
+            opts.border = {};
+            if (bb.style !== D.BorderStyle.NONE) opts.border.bottom = { style: bb.style, size: bb.size, color: bb.color, space: 1 };
+            if (tb.style !== D.BorderStyle.NONE) opts.border.top = { style: tb.style, size: tb.size, color: tb.color, space: 1 };
+        }
+        if (cs.breakInside === 'avoid' || cs.pageBreakInside === 'avoid') opts.keepLines = true;
+        if (/^H[1-6]$/.test(el.tagName)) opts.keepNext = true;
+        if (st.pendingBreak) { opts.pageBreakBefore = true; st.pendingBreak = false; }
+        return new D.Paragraph(opts);
+    }
+    function dxTable(tbl, cx, st) {
+        const D = cx.D, win = cx.win;
+        const rows = Array.from(tbl.rows);
+        if (!rows.length) return null;
+        const tr = tbl.getBoundingClientRect();
+        const tol = 1.5;
+        const xs = [];
+        const addX = function (x) { if (!xs.some(function (v) { return Math.abs(v - x) <= tol; })) xs.push(x); };
+        rows.forEach(function (r) { Array.from(r.cells).forEach(function (c) { const b = c.getBoundingClientRect(); addX(b.left); addX(b.right); }); });
+        xs.sort(function (a, b) { return a - b; });
+        const widths = [];
+        for (let i = 0; i < xs.length - 1; i++) widths.push(Math.max(1, xs[i + 1] - xs[i]));
+        if (!widths.length) return null;
+        const idx = function (x) { let bi = 0, bd = 1e9; xs.forEach(function (v, i) { const d = Math.abs(v - x); if (d < bd) { bd = d; bi = i; } }); return bi; };
+        const trows = rows.map(function (row) {
+            const cells = Array.from(row.cells).map(function (c) {
+                const b = c.getBoundingClientRect();
+                const ccs = win.getComputedStyle(c);
+                const padL = dxNum(ccs.paddingLeft), padR = dxNum(ccs.paddingRight), padT = dxNum(ccs.paddingTop), padB = dxNum(ccs.paddingBottom);
+                const inner = Object.assign({}, cx, { box: { left: b.left + padL + dxNum(ccs.borderLeftWidth), right: b.right - padR - dxNum(ccs.borderRightWidth) } });
+                const blocks = [];
+                dxContainer(c, blocks, inner, { pendingBreak: false });
+                const last = blocks[blocks.length - 1];
+                if (!last || last instanceof D.Table) blocks.push(new D.Paragraph({ children: [], spacing: { before: 0, after: 0 } }));
+                const bg = dxColor(ccs.backgroundColor);
+                const va = ccs.verticalAlign === 'middle' ? D.VerticalAlign.CENTER : (ccs.verticalAlign === 'bottom' ? D.VerticalAlign.BOTTOM : D.VerticalAlign.TOP);
+                const o = {
+                    children: blocks,
+                    width: { size: dxTw(b.width), type: D.WidthType.DXA },
+                    columnSpan: Math.max(1, idx(b.right) - idx(b.left)),
+                    verticalAlign: va,
+                    margins: { top: dxTw(padT), bottom: dxTw(padB), left: dxTw(padL), right: dxTw(padR) },
+                    borders: { top: dxBorder(ccs, 'Top', D), bottom: dxBorder(ccs, 'Bottom', D), left: dxBorder(ccs, 'Left', D), right: dxBorder(ccs, 'Right', D) }
+                };
+                if (c.rowSpan > 1) o.rowSpan = c.rowSpan;
+                if (bg) o.shading = { type: D.ShadingType.CLEAR, fill: bg, color: 'auto' };
+                return new D.TableCell(o);
+            });
+            const rh = row.getBoundingClientRect().height;
+            return new D.TableRow({ children: cells, cantSplit: true, height: { value: dxTw(Math.max(1, rh - 1)), rule: D.HeightRule.ATLEAST } });
+        });
+        const none = { style: D.BorderStyle.NONE, size: 0, color: 'auto' };
+        const o = {
+            rows: trows,
+            width: { size: dxTw(tr.width), type: D.WidthType.DXA },
+            columnWidths: widths.map(dxTw),
+            layout: D.TableLayoutType.FIXED,
+            borders: { top: none, bottom: none, left: none, right: none, insideHorizontal: none, insideVertical: none }
+        };
+        const boxW = cx.box.right - cx.box.left;
+        if (tr.width < boxW - 4) {
+            const lOff = tr.left - cx.box.left, rOff = cx.box.right - tr.right;
+            if (Math.abs(lOff - rOff) < 4) o.alignment = D.AlignmentType.CENTER;
+            else if (rOff < 3) o.alignment = D.AlignmentType.RIGHT;
+            else o.indent = { size: dxTw(Math.max(0, lOff)), type: D.WidthType.DXA };
+        }
+        return new D.Table(o);
+    }
+    // Duyệt các phần tử con của 1 khối: gom chữ/ảnh thành đoạn, bảng thành bảng, khối lồng nhau đệ quy
+    function dxContainer(el, blocks, cx, st) {
+        let items = [], ist = { lead: true };
+        const flush = function (styleEl) {
+            if (items.some(function (i) { return i.k !== 't' || i.o.text.trim() !== ''; })) blocks.push(dxParagraph(styleEl, items, cx, st));
+            items = []; ist = { lead: true };
+        };
+        el.childNodes.forEach(function (n) {
+            if (n.nodeType === 3) { dxInline(n, cx, items, ist); return; }
+            if (n.nodeType !== 1) return;
+            const tag = n.tagName;
+            if (tag === 'STYLE' || tag === 'SCRIPT') return;
+            const cs = cx.win.getComputedStyle(n);
+            if (cs.display === 'none') return;
+            if (!dxIsBlock(n, cx)) { dxInline(n, cx, items, ist); return; }
+            flush(el);
+            const brk = n.classList.contains('pdf-appendix-photo') || cs.breakBefore === 'page' || cs.pageBreakBefore === 'always';
+            if (brk && blocks.length) st.pendingBreak = true;
+            if (tag === 'TABLE') {
+                const t = dxTable(n, cx, st);
+                if (t) {
+                    if (st.pendingBreak) { blocks.push(new cx.D.Paragraph({ children: [], pageBreakBefore: true, spacing: { before: 0, after: 0 } })); st.pendingBreak = false; }
+                    blocks.push(t);
+                    blocks.push(new cx.D.Paragraph({ children: [], spacing: { before: 0, after: 0, line: 20, lineRule: cx.D.LineRuleType.EXACT } }));
+                }
+            } else if (dxHasBlockChild(n, cx)) {
+                dxContainer(n, blocks, cx, st);
+            } else {
+                const its = [], s2 = { lead: true };
+                if (cs.display === 'list-item') its.push({ k: 't', o: { text: '• ', font: 'Times New Roman', size: Math.round((dxNum(cs.fontSize) || 16) * 1.5) } });
+                n.childNodes.forEach(function (c) { dxInline(c, cx, its, s2); });
+                const hasContent = its.some(function (i) { return i.k !== 't' || i.o.text.trim() !== ''; });
+                const bb = dxBorder(cs, 'Bottom', cx.D);
+                const r = n.getBoundingClientRect();
+                if (hasContent || bb.style !== cx.D.BorderStyle.NONE || r.height > 6) {
+                    // khối trống có chiều cao (khoảng ký tên) vẫn giữ chỗ
+                    if (!hasContent && bb.style === cx.D.BorderStyle.NONE) {
+                        const p = new cx.D.Paragraph({ children: [], spacing: { before: dxTw(r.height), after: 0, line: 20, lineRule: cx.D.LineRuleType.EXACT }, pageBreakBefore: st.pendingBreak || undefined });
+                        st.pendingBreak = false; blocks.push(p);
+                    } else {
+                        blocks.push(dxParagraph(n, its, cx, st));
+                    }
+                } else if (st.pendingBreak) { /* giữ cờ ngắt trang cho khối kế tiếp */ }
+            }
+        });
+        flush(el);
+    }
+
+    async function buildDocxBlob(innerHtml) {
+        await loadDocxLib();
+        const D = window.docx;
+        const m = getMargins();
+        const MM = 96 / 25.4;
+        const contentWmm = 210 - m.left - m.right;
+        const contentWpx = Math.round(contentWmm * MM);
+        const iframe = document.createElement('iframe');
+        iframe.setAttribute('aria-hidden', 'true');
+        iframe.style.cssText = 'position:fixed;left:-12000px;top:0;width:' + contentWpx + 'px;height:1200px;border:0;';
+        document.body.appendChild(iframe);
+        try {
+            const doc = iframe.contentDocument;
+            doc.open();
+            doc.write('<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8">' +
+                '<link href="https://fonts.googleapis.com/css2?family=Tinos:wght@400;700&display=swap" rel="stylesheet">' +
+                '<style>html,body{margin:0;padding:0;background:#fff;}body{width:' + contentWpx + 'px;}' +
+                '.rpt-body{padding:0 !important;}img{max-width:100%;}</style></head><body>' + String(innerHtml).replace(/\sloading="lazy"/g, '') + '</body></html>');
+            doc.close();
+            const imgs = Array.from(doc.images || []);
+            await Promise.race([
+                Promise.all(imgs.map(function (im) { return (im.complete && im.naturalWidth > 0) ? null : new Promise(function (r) { im.onload = im.onerror = r; }); })),
+                pdfSleep(8000)
+            ]);
+            if (doc.fonts && doc.fonts.ready) await Promise.race([doc.fonts.ready, pdfSleep(3000)]);
+            await pdfSleep(150);
+            iframe.style.height = (Math.ceil(doc.body.scrollHeight) + 20) + 'px';
+            await pdfSleep(50);
+
+            const bb = doc.body.getBoundingClientRect();
+            const cx = { D: D, win: iframe.contentWindow, box: { left: bb.left, right: bb.left + contentWpx } };
+            const children = [];
+            dxContainer(doc.body, children, cx, { pendingBreak: false });
+            if (!children.length) children.push(new D.Paragraph({ children: [] }));
+
+            const tw = function (mm) { return Math.round(mm * 56.7); };
+            const document_ = new D.Document({
+                creator: 'NL Office',
+                styles: { default: { document: { run: { font: 'Times New Roman', size: 26 } } } },
+                sections: [{
+                    properties: { page: { size: { width: 11906, height: 16838 }, margin: { top: tw(m.top), bottom: tw(m.bottom), left: tw(m.left), right: tw(m.right) } } },
+                    children: children
+                }]
+            });
+            const out = await D.Packer.toBlob(document_);
+            return new Blob([out], { type: DOCX_MIME });
+        } finally {
+            if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+        }
+    }
+
+    async function docxFlow(kind) {
+        const isKs = (kind === 'khaosat');
+        const fileName = isKs ? buildFileName('docx') : buildTabFileName(kind, 'docx');
+        pdfShowBusy('Đang tạo file Word… vui lòng chờ vài giây');
+        try {
+            if (kind === 'lamviec') { try { renderLvSignatures(); } catch (e) { } }
+            const html = isKs ? getReportHTML() : buildTabReportHTML(kind);
+            const blob = await buildDocxBlob(html);
+            try { await saveToUnifiedArchive(kind, 'word', blob, archiveData(kind, fileName)); }
+            catch (e) { console.log('Không lưu được vào Lưu Trữ:', e && e.message); }
+            pdfHideBusy();
+            pdfShowReady(blob, fileName, 'export', DOCX_MIME, 'File Word');
+        } catch (err) {
+            pdfHideBusy();
+            console.log('docxFlow lỗi:', err);
+            if (confirm('Không tạo được file Word chuẩn (' + (err && err.message ? err.message : err) + ').\n\nXuất bản Word đơn giản (có thể lệch bố cục)?')) {
+                if (isKs) exportToDocxLegacy(); else exportTabToDocxLegacy(kind);
             }
         }
     }
@@ -3060,7 +3391,9 @@
         }
     }
 
-    function exportToDocx() {
+    function exportToDocx() { docxFlow('khaosat'); }
+
+    function exportToDocxLegacy() {
       try {
         const reportHtml = getReportHTML();
         const m = getMargins();
@@ -3387,6 +3720,7 @@
         clearSignature('sigSurveyor');
         currentRecordId = null;
         idbDelete(DRAFT_STORAGE_KEY).catch(function() { /* ignore */ });
+        clearAutosave('khaosat');
         const statusEl = document.getElementById('draftStatus');
         if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-file"></i> Khảo sát mới.';
         updateMarginHint();
@@ -3464,7 +3798,7 @@
         if (_previewSource === 'khaosat') {
             if (kind === 'pdf') exportToPDF();
             else if (kind === 'zalo') shareViaPdf();
-            else { archiveKhaosat('word'); exportToDocx(); }
+            else exportToDocx();
         } else {
             if (kind === 'pdf') exportTabToPDF(_previewSource);
             else if (kind === 'zalo') shareTabViaPdf(_previewSource);
@@ -3475,7 +3809,23 @@
     function fitPreview() {
         const el = document.getElementById('previewContent');
         const avail = Math.min(window.innerWidth, 820) - 62;
-        el.style.zoom = avail < 794 ? Math.max(0.3, avail / 794) : 1;
+        const fit = avail < 794 ? Math.max(0.3, avail / 794) : 1;
+        el.dataset.fit = fit;
+        el.style.zoom = fit;
+        if (el.parentNode) el.parentNode.style.overflow = 'auto';
+        let hint = document.getElementById('previewZoomHint');
+        if (!hint) {
+            hint = document.createElement('div');
+            hint.id = 'previewZoomHint';
+            hint.className = 'small text-muted text-center';
+            hint.style.cssText = 'padding:4px 0 0 0;';
+            el.parentNode.insertBefore(hint, el);
+            el.addEventListener('click', function () {
+                const f = parseFloat(el.dataset.fit) || 1;
+                el.style.zoom = (parseFloat(el.style.zoom) || 1) < 0.99 ? 1 : f;
+            });
+        }
+        hint.textContent = fit < 0.9 ? 'Chạm vào trang để phóng to / thu nhỏ' : '';
     }
 
     function closePreview() {
@@ -3512,24 +3862,6 @@
         const btn = document.getElementById('installAppBtn');
         if (btn) btn.style.display = 'inline-block';
     });
-
-    function installApp() {
-        if (deferredInstallPrompt) {
-            deferredInstallPrompt.prompt();
-            deferredInstallPrompt.userChoice.finally(() => {
-                deferredInstallPrompt = null;
-                const btn = document.getElementById('installAppBtn');
-                if (btn) btn.style.display = 'none';
-            });
-        } else {
-            const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-            if (isIOS) {
-                alert('Trên iPhone: chạm biểu tượng Chia sẻ (hình vuông có mũi tên) trên thanh Safari, sau đó chọn "Thêm vào MH chính".');
-            } else {
-                alert('Mở menu trình duyệt (dấu 3 chấm) và chọn "Thêm vào màn hình chính" hoặc "Cài đặt ứng dụng".');
-            }
-        }
-    }
 
     // ===================== TAB CHUYỂN ĐỔI (Khảo sát / Bảo trì / Bảo hành / Bàn giao / Làm việc) =====================
     function showTab(tabKey) {
@@ -3575,7 +3907,7 @@
         baocao: {
             title: 'BÁO CÁO CÔNG VIỆC HÀNG NGÀY', code: 'BCCV', custField: 'baocao_diadiem', dateField: 'baocao_ngay',
             fields: ['baocao_ngay','baocao_nguoilap','baocao_diadiem','baocao_thoitiet','baocao_congnhan','baocao_nhanluchiện','baocao_gioconv','baocao_motagongviec','baocao_tiendobachram','baocao_trangthai','baocao_vandedexuat','baocao_tenKyThuthuVien','baocao_tenChudauTu'],
-            photoField: 'baocao_anh', photoPreview: 'baocao_anhPreview', sigA: 'baocao_kyThuthuVien', sigB: 'baocao_kyChudauTu'
+            photoField: 'baocao_anh', photoPreview: 'baocao_anhPreview', sigA: 'baocao_kyThuthuVien', sigB: 'baocao_kyChudauTu', sigANameId: 'baocao_tenKyThuthuVien', sigBNameId: 'baocao_tenChudauTu'
         }
 ,
         guide: {
@@ -3755,6 +4087,12 @@
     function renderLvSignatures() {
         const container = document.getElementById('lv-signatures-container');
         if (!container) return;
+        // Danh sách đơn vị không đổi -> giữ nguyên khung ký (không xóa tên/chữ ký đã nhập)
+        const unitKey = collectLvUnits().map(function (u) { return u.name || ''; }).join('|');
+        if (container.dataset.key === unitKey && container.querySelector('canvas')) return;
+        container.dataset.key = unitKey;
+        const prevNames = {};
+        container.querySelectorAll('.lv-sig-name').forEach(function (i) { prevNames[i.getAttribute('data-idx')] = i.value; });
         // Lưu lại chữ ký đã vẽ (theo index) để không mất khi vẽ lại khung
         const prev = {};
         container.querySelectorAll('canvas').forEach(c => { if (!isCanvasBlank(c)) prev[c.getAttribute('data-idx')] = c.toDataURL('image/png'); });
@@ -3786,6 +4124,7 @@
             initSignaturePad('lv-sig-' + idx);
             if (prev[idx]) drawSignatureFromDataURL('lv-sig-' + idx, prev[idx]);
         });
+        container.querySelectorAll('.lv-sig-name').forEach(function (i) { const v = prevNames[i.getAttribute('data-idx')]; if (v) i.value = v; });
     }
 
     function addLvTaskRow() {
@@ -3808,6 +4147,7 @@
         event.target.value = '';
     }
     function renderTabPhotoPreviews(tabKey) {
+        markDirty(tabKey);
         const cfg = TAB_CONFIG[tabKey];
         const container = document.getElementById(cfg.photoPreview);
         if (!container) return;
@@ -3907,6 +4247,71 @@
         if (cfg.sigB) { clearSignature(cfg.sigB); if (data.sigB) drawSignatureFromDataURL(cfg.sigB, data.sigB); }
     }
 
+
+    // ===================== TỰ LƯU PHIẾU ĐANG NHẬP (tự động, không hỏi, không danh sách) =====================
+    // Phòng mất dữ liệu khi điện thoại tải lại trang / đóng app ngầm (hay gặp trên iPhone khi chuyển sang Zalo, camera).
+    var AUTOSAVE_KINDS = ['khaosat', 'baotri', 'baohanh', 'bangiao', 'lamviec', 'baocao'];
+    var _autosaveDirty = {};
+    var _autosaveTimer = null;
+    var _autosaveReady = false;
+    function autosaveKindOf(el) {
+        const pane = el && el.closest ? el.closest('.tab-pane') : null;
+        if (!pane) return null;
+        const k = pane.id.replace('tab-', '');
+        return AUTOSAVE_KINDS.indexOf(k) >= 0 ? k : null;
+    }
+    function markDirty(kind) {
+        if (!kind || !_autosaveReady || !_autosaveDirty) return;
+        _autosaveDirty[kind] = true;
+        clearTimeout(_autosaveTimer);
+        _autosaveTimer = setTimeout(flushAutosave, 2000);
+    }
+    function setAutosaveStatus(kind, msg) {
+        let el = document.getElementById('autosave-' + kind);
+        const pane = document.getElementById('tab-' + kind);
+        if (!el && pane) {
+            el = document.createElement('div');
+            el.id = 'autosave-' + kind;
+            el.className = 'no-print small text-muted text-end mb-2';
+            pane.insertBefore(el, pane.firstChild);
+        }
+        if (el) el.textContent = msg || '';
+    }
+    async function flushAutosave() {
+        clearTimeout(_autosaveTimer);
+        const kinds = Object.keys(_autosaveDirty).filter(function (k) { return _autosaveDirty[k]; });
+        for (const k of kinds) {
+            _autosaveDirty[k] = false;
+            try {
+                const data = (k === 'khaosat') ? collectFormData() : collectTabData(k);
+                await idbSet('autosave_' + k, { ts: Date.now(), data: data });
+                setAutosaveStatus(k, '✓ Đã tự lưu trên máy lúc ' + new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }));
+            } catch (e) {
+                setAutosaveStatus(k, '⚠️ Không tự lưu được (bộ nhớ máy có thể đã đầy)');
+            }
+        }
+    }
+    async function clearAutosave(kind) {
+        _autosaveDirty[kind] = false;
+        try { await idbDelete('autosave_' + kind); } catch (e) { }
+        setAutosaveStatus(kind, '');
+    }
+    async function restoreAutosaves() {
+        for (const k of AUTOSAVE_KINDS) {
+            try {
+                const rec = await idbGet('autosave_' + k);
+                if (!rec || !rec.data) continue;
+                if (k === 'khaosat') applyLoadedData(rec.data); else applyTabData(k, rec.data);
+                setAutosaveStatus(k, '↩ Đã mở lại phiếu đang làm dở (lưu lúc ' + new Date(rec.ts).toLocaleString('vi-VN') + ')');
+            } catch (e) { console.log('Khôi phục phiếu dở lỗi:', k, e && e.message); }
+        }
+        _autosaveReady = true;
+    }
+    document.addEventListener('pointerup', function (e) { if (e.target && e.target.tagName === 'CANVAS') markDirty(autosaveKindOf(e.target)); });
+    document.addEventListener('touchend', function (e) { if (e.target && e.target.tagName === 'CANVAS') markDirty(autosaveKindOf(e.target)); });
+    document.addEventListener('click', function (e) { const b = e.target && e.target.closest ? e.target.closest('button') : null; if (b) { const k = autosaveKindOf(b); if (k) setTimeout(function () { markDirty(k); }, 50); } });
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flushAutosave(); });
+    window.addEventListener('pagehide', function () { flushAutosave(); });
 
     // ===================== UNIFIED ARCHIVE - Lưu từ tất cả module ==========
     function newArchiveId() { return Date.now() * 1000 + Math.floor(Math.random() * 1000); }
@@ -4114,7 +4519,7 @@
     }
 
     function newTabReport(tabKey) {
-        if (!confirm('Bắt đầu phiếu mới? Nội dung chưa lưu vào danh sách sẽ mất.')) return;
+        if (!confirm('Bắt đầu phiếu mới? Nội dung đang nhập sẽ bị xóa (các bản đã xuất vẫn còn trong Lưu Trữ).')) return;
         const cfg = TAB_CONFIG[tabKey];
         cfg.fields.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
         // Điền lại ngày hôm nay thay vì để trống, giống lúc mở tab lần đầu
@@ -4135,7 +4540,7 @@
         if (cfg.sigA) clearSignature(cfg.sigA);
         if (cfg.sigB) clearSignature(cfg.sigB);
         tabCurrentRecordId[tabKey] = null;
-        idbDelete('draft_' + tabKey).catch(() => {});
+        clearAutosave(tabKey);
         const statusEl = document.getElementById('draftStatus-' + tabKey);
         if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-file"></i> Phiếu mới.';
     }
@@ -4168,7 +4573,7 @@
             const fit = fitDimensions(p.width, p.height, 150, 150);
             const sizeAttr = fit ? ` width="${fit.w}" height="${fit.h}"` : '';
             const sizeStyle = fit ? `width:${fit.w}px;height:${fit.h}px;` : 'max-width:150px;max-height:150px;';
-            html += `<div style="display:inline-block;margin:4px;text-align:center;"><img src="${p.src}"${sizeAttr} style="${sizeStyle}border:1px solid #ccc;" loading="lazy" /></div>`;
+            html += `<div style="display:inline-block;margin:4px;text-align:center;"><img src="${p.src}"${sizeAttr} style="${sizeStyle}border:1px solid #ccc;" /></div>`;
         });
         html += '</div></div>';
         return html;
@@ -4190,7 +4595,7 @@
                 return `<td style="width:50%;vertical-align:top;padding:6px;text-align:center;">
                     <div style="font-weight:bold;">ĐẠI DIỆN ${escapeHTML(label)}</div>
                     <div style="font-size:9pt;font-style:italic;">(Ký, ghi rõ họ tên)</div>
-                    <div style="height:80px;">${sigs[idx] ? `<img src="${sigs[idx]}" style="max-height:75px;max-width:190px;" loading="lazy" />` : ''}</div>
+                    <div style="height:80px;">${sigs[idx] ? `<img src="${sigs[idx]}" style="max-height:75px;max-width:190px;" />` : ''}</div>
                     <div style="border-top:1px solid #333;padding-top:3px;">${escapeHTML(nm)}</div></td>`;
             };
             let html = '<div class="imgblock" style="page-break-inside:avoid;margin-top:20px;"><table style="width:100%;border-collapse:collapse;">';
@@ -4207,18 +4612,30 @@
 
         const sigA = getSignatureDataURL(cfg.sigA);
         const sigB = getSignatureDataURL(cfg.sigB);
-        const nameA = (document.getElementById(cfg.sigA + 'Name')?.value || '').trim() || '..........................................';
-        const nameB = (document.getElementById(cfg.sigB + 'Name')?.value || '').trim() || '..........................................';
+        const nameA = (document.getElementById(cfg.sigANameId || (cfg.sigA + 'Name'))?.value || '').trim() || '..........................................';
+        const nameB = (document.getElementById(cfg.sigBNameId || (cfg.sigB + 'Name'))?.value || '').trim() || '..........................................';
         return `<div class="imgblock" style="page-break-inside:avoid;margin-top:20px;">
             <table style="width:100%;border-collapse:collapse;text-align:center;">
                 <tr><td style="width:50%;padding:4px;"><b>${labelA}</b><br/><span style="font-size:9pt;font-style:italic;">(Ký, ghi rõ họ tên)</span></td>
                     <td style="width:50%;padding:4px;"><b>${labelB}</b><br/><span style="font-size:9pt;font-style:italic;">(Ký, ghi rõ họ tên)</span></td></tr>
-                <tr><td style="height:85px;vertical-align:bottom;">${sigA ? `<img src="${sigA}" style="max-height:75px;max-width:190px;" loading="lazy" />` : ''}</td>
-                    <td style="height:85px;vertical-align:bottom;">${sigB ? `<img src="${sigB}" style="max-height:75px;max-width:190px;" loading="lazy" />` : ''}</td></tr>
+                <tr><td style="height:85px;vertical-align:bottom;">${sigA ? `<img src="${sigA}" style="max-height:75px;max-width:190px;" />` : ''}</td>
+                    <td style="height:85px;vertical-align:bottom;">${sigB ? `<img src="${sigB}" style="max-height:75px;max-width:190px;" />` : ''}</td></tr>
                 <tr><td style="border-top:1px solid #333;padding:4px;">${escapeHTML(nameA)}</td><td style="border-top:1px solid #333;padding:4px;">${escapeHTML(nameB)}</td></tr>
             </table></div>`;
     }
-    function fv(id) { const el = document.getElementById(id); return el ? (el.tagName === 'SELECT' ? el.options[el.selectedIndex]?.text : el.value) || 'N/A' : 'N/A'; }
+    // Giá trị ô nhập đã an toàn để chèn vào báo cáo (xử lý ký tự < > &, xuống dòng của ô nhiều dòng)
+    function escVal(id) {
+        const el = document.getElementById(id);
+        if (!el) return '';
+        const v = escapeHTML(el.value);
+        return el.tagName === 'TEXTAREA' ? v.replace(/\r?\n/g, '<br>') : v;
+    }
+    function fv(id) {
+        const el = document.getElementById(id);
+        if (!el) return 'N/A';
+        if (el.tagName === 'SELECT') return escapeHTML(el.value || '') || 'N/A';
+        return escVal(id) || 'N/A';
+    }
     function fvRaw(id) { const el = document.getElementById(id); return el ? el.value : ''; }
 
     function buildTabReportHTML(tabKey) {
@@ -4237,18 +4654,18 @@
             let last = parts[parts.length - 1].replace(/^(TP\.?|Thành phố|Tỉnh)\s*/i, '').trim();
             return last || 'Hải Phòng';
         }
-        const addressId = { baotri: 'bt-address', baohanh: 'bh-address', bangiao: 'bg-address', lamviec: 'lv-address' }[tabKey];
+        const addressId = { baotri: 'bt-address', baohanh: 'bh-address', bangiao: 'bg-address', lamviec: 'lv-address', baocao: 'baocao_diadiem' }[tabKey];
         const locationName = deriveLocationName(fvRaw(addressId));
-        const execDateId = { baotri: 'bt-execDate', baohanh: 'bh-execDate', bangiao: 'bg-execDate', lamviec: 'lv-execDate' }[tabKey];
+        const execDateId = { baotri: 'bt-execDate', baohanh: 'bh-execDate', bangiao: 'bg-execDate', lamviec: 'lv-execDate', baocao: 'baocao_ngay' }[tabKey];
         const dateVal = fvRaw(execDateId);
         let dateLabel = `${locationName}, ngày ... tháng ... năm ` + new Date().getFullYear();
         if (dateVal) { const p = dateVal.split('-'); if (p.length === 3) dateLabel = `${locationName}, ngày ${p[2]} tháng ${p[1]} năm ${p[0]}`; }
 
         const header = `<table style="width:100%;border-collapse:collapse;margin-bottom:6px;"><tr>
-            <td style="width:52%;vertical-align:top;text-align:left;">
+            <td style="width:40%;vertical-align:top;text-align:left;">
                 <table style="border-collapse:collapse;"><tr>
                     <td style="vertical-align:middle;padding-right:8px;">
-                        ${logoDataURL ? (() => { const lf = logoDims ? fitDimensions(logoDims.width, logoDims.height, 78, 34) : null; const a = lf ? ` width="${lf.w}" height="${lf.h}"` : ''; const st = lf ? `width:${lf.w}px;height:${lf.h}px;` : 'max-width:78px;max-height:34px;'; return `<img src="${logoDataURL}"${a} style="${st}object-fit:contain;" loading="lazy" />`; })() : ''}
+                        ${logoDataURL ? (() => { const lf = logoDims ? fitDimensions(logoDims.width, logoDims.height, 78, 34) : null; const a = lf ? ` width="${lf.w}" height="${lf.h}"` : ''; const st = lf ? `width:${lf.w}px;height:${lf.h}px;` : 'max-width:78px;max-height:34px;'; return `<img src="${logoDataURL}"${a} style="${st}object-fit:contain;" />`; })() : ''}
                     </td>
                     <td style="vertical-align:middle;">
                         <span style="color:#003366;font-size:9.5pt;font-weight:bold;line-height:1.2;">${escapeHTML(fvRaw('companyName') || 'CÔNG TY TNHH NĂNG LƯỢNG NGỌC LONG')}</span>
@@ -4257,9 +4674,9 @@
                     </td>
                 </tr></table>
             </td>
-            <td style="width:48%;vertical-align:top;text-align:center;">
-                <div style="font-weight:bold;font-size:11pt;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
-                <div style="font-weight:bold;font-size:11pt;">Độc lập - Tự do - Hạnh phúc</div>
+            <td style="width:60%;vertical-align:top;text-align:center;white-space:nowrap;" nowrap="nowrap">
+                <div style="font-weight:bold;font-size:11pt;white-space:nowrap;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+                <div style="font-weight:bold;font-size:11pt;white-space:nowrap;">Độc lập - Tự do - Hạnh phúc</div>
                 <div style="border-bottom:1px solid #000;width:120px;margin:3px auto 6px auto;"></div>
                 <div style="font-style:italic;font-size:10pt;text-align:right;padding-right:4px;">${escapeHTML(dateLabel)}</div>
             </td></tr></table>`;
@@ -4296,7 +4713,7 @@
                 <p><b>Thiết bị:</b> ${fv('bh-deviceName')} &nbsp; <b>Serial:</b> ${fv('bh-serial')} &nbsp; <b>Hạn bảo hành đến:</b> ${fv('bh-warrantyUntil')}</p>
                 <p><b>Mô tả sự cố:</b> ${fv('bh-issueDesc')}</p>
                 <p><b>Nguyên nhân:</b> ${fv('bh-issueCause')}</p>
-                <p><b>Hướng xử lý:</b> ${fv('bh-action')} ${fvRaw('bh-rejectReason') ? '(' + escapeHTML(fvRaw('bh-rejectReason')) + ')' : ''}</p>${tbl}
+                <p><b>Hướng xử lý:</b> ${fv('bh-action')} ${fvRaw('bh-rejectReason') ? '(' + escVal('bh-rejectReason') + ')' : ''}</p>${tbl}
                 <p style="margin-top:10px;"><b>Ý kiến khách hàng:</b> ${fv('bh-clientRemarks')}</p>
                 <p><b>Kết luận:</b> ${fv('bh-conclusion')}</p>`;
         } else if (tabKey === 'bangiao') {
@@ -4311,8 +4728,22 @@
                 <p><b>Bên Giao:</b> ${fv('bg-partyAOrg')} - ${fv('bg-partyAName')} (${fv('bg-partyAPos')})</p>
                 <p><b>Bên Nhận:</b> ${fv('bg-partyBOrg')} - ${fv('bg-partyBName')} (${fv('bg-partyBPos')})</p>
                 <p><b>Hợp đồng/Đơn hàng số:</b> ${fv('bg-contractNo')} &nbsp; <b>Biên bản liên quan:</b> ${fv('bg-refDoc')}</p>${tbl}
-                <p style="margin-top:10px;white-space:pre-wrap;"><b>Trách nhiệm & kết luận:</b> ${escapeHTML(fvRaw('bg-responsibilities'))}</p>
+                <p style="margin-top:10px;white-space:pre-wrap;"><b>Trách nhiệm & kết luận:</b> ${escVal('bg-responsibilities')}</p>
                 <p style="font-size:9pt;font-style:italic;">Biên bản lập thành 02 bản, mỗi bên giữ 01 bản có giá trị pháp lý như nhau./.</p>`;
+        } else if (tabKey === 'baocao') {
+            const pct = fvRaw('baocao_tiendobachram');
+            const people = fvRaw('baocao_nhanluchiện'), hours = fvRaw('baocao_gioconv');
+            body = `<p><b>Ngày báo cáo:</b> ${fv('baocao_ngay')} &nbsp; <b>Thời tiết:</b> ${fv('baocao_thoitiet')}</p>
+                <p><b>Người lập báo cáo:</b> ${fv('baocao_nguoilap')}</p>
+                <p><b>Dự án / Địa điểm:</b> ${fv('baocao_diadiem')}</p>
+                <p style="margin-top:8px;"><b>1. Nhân lực tham gia</b></p>
+                <p><b>Tổng nhân lực:</b> ${people ? escapeHTML(people) + ' người' : 'N/A'} &nbsp; <b>Tổng giờ công:</b> ${hours ? escapeHTML(hours) + ' giờ' : 'N/A'}</p>
+                <p><b>Danh sách công nhân:</b><br>${escVal('baocao_congnhan') || 'N/A'}</p>
+                <p style="margin-top:8px;"><b>2. Công việc đã thực hiện</b></p>
+                <p>${escVal('baocao_motagongviec') || 'N/A'}</p>
+                <p><b>Tiến độ:</b> ${pct !== '' ? escapeHTML(pct) + '%' : 'N/A'} &nbsp; <b>Trạng thái:</b> ${fv('baocao_trangthai')}</p>
+                <p style="margin-top:8px;"><b>3. Vấn đề / Khó khăn / Đề xuất</b></p>
+                <p>${escVal('baocao_vandedexuat') || 'Không có'}</p>`;
         } else {
             const units = collectLvUnits();
             let attHtml = '';
@@ -4333,13 +4764,14 @@
             body = `<p><b>Thời gian:</b> ${fv('lv-execDate')} &nbsp; <b>Địa điểm:</b> ${fv('lv-address')}</p>
                 <p><b>Nội dung / đơn vị làm việc:</b> ${fv('lv-custName')}</p>
                 <p style="margin-top:8px;"><b>Thành phần tham dự:</b></p>${attHtml}
-                <p style="margin-top:10px;white-space:pre-wrap;"><b>Nội dung làm việc:</b> ${escapeHTML(fvRaw('lv-content'))}</p>
-                <p style="white-space:pre-wrap;"><b>Kết luận:</b> ${escapeHTML(fvRaw('lv-conclusion'))}</p>
+                <p style="margin-top:10px;white-space:pre-wrap;"><b>Nội dung làm việc:</b> ${escVal('lv-content')}</p>
+                <p style="white-space:pre-wrap;"><b>Kết luận:</b> ${escVal('lv-conclusion')}</p>
                 <p style="margin-top:8px;"><b>Phân công tiếp theo:</b></p>${taskTbl}`;
         }
 
-        const labelA = (tabKey === 'bangiao') ? 'ĐẠI DIỆN BÊN GIAO (BÊN A)' : 'ĐẠI DIỆN KHÁCH HÀNG (BÊN A)';
-        const labelB = (tabKey === 'bangiao') ? 'ĐẠI DIỆN BÊN NHẬN (BÊN B)' : 'ĐẠI DIỆN CÔNG TY TNHH NĂNG LƯỢNG NGỌC LONG (BÊN B)';
+        let labelA = (tabKey === 'bangiao') ? 'ĐẠI DIỆN BÊN GIAO (BÊN A)' : 'ĐẠI DIỆN KHÁCH HÀNG (BÊN A)';
+        let labelB = (tabKey === 'bangiao') ? 'ĐẠI DIỆN BÊN NHẬN (BÊN B)' : 'ĐẠI DIỆN CÔNG TY TNHH NĂNG LƯỢNG NGỌC LONG (BÊN B)';
+        if (tabKey === 'baocao') { labelA = 'NGƯỜI LẬP BÁO CÁO'; labelB = 'XÁC NHẬN CHỦ ĐẦU TƯ / CHỦ HỘ'; }
 
         return `<style>.rpt-body{font-family:'Tinos','Times New Roman',Times,serif;font-size:13pt;line-height:1.5;color:#000;}
             .rpt-body p{margin:0 0 6pt 0;text-align:justify;}
@@ -4400,8 +4832,9 @@
         else { imgs.forEach(im => { if (im.complete && im.naturalWidth > 0) return; im.onload = im.onerror = () => { if (--pending <= 0) setTimeout(doPrint, 300); }; }); setTimeout(doPrint, 5000); }
     }
 
-    function exportTabToDocx(tabKey) {
-        autoArchive(tabKey, 'word');
+    function exportTabToDocx(tabKey) { docxFlow(tabKey); }
+
+    function exportTabToDocxLegacy(tabKey) {
         try {
             const m = getMargins();
             const pre = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
@@ -4508,6 +4941,33 @@
         if (el && !el.value) el.valueAsDate = new Date();
     });
 
+    // Thêm nút "Chụp" cho MỌI ô chọn ảnh chưa có nút (khảo sát, bảo trì, bảo hành, bàn giao, làm việc, báo cáo)
+    function addCameraButtons() {
+        document.querySelectorAll('input[type="file"][accept="image/*"]').forEach(function (inp) {
+            if (!inp.id || inp.id === 'settingsLogoInput' || inp.id === 'logoInput') return;
+            const nxt = inp.nextElementSibling;
+            if (nxt && nxt.classList && nxt.classList.contains('photo-capture-btn')) return;
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'photo-capture-btn no-print';
+            btn.innerHTML = '<i class="fa-solid fa-camera"></i> Chụp';
+            btn.onclick = function () { openCameraModal(inp.id, ''); };
+            const parent = inp.parentNode;
+            if (parent && parent.style && parent.style.display === 'flex') {
+                inp.insertAdjacentElement('afterend', btn);
+            } else {
+                const wrap = document.createElement('div');
+                wrap.className = 'no-print';
+                wrap.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;';
+                parent.insertBefore(wrap, inp);
+                inp.style.flex = '1';
+                wrap.appendChild(inp);
+                wrap.appendChild(btn);
+            }
+        });
+    }
+    addCameraButtons();
+
     (async function initApp() {
         try {
             await migrateFromLocalStorage();   // chuyển dữ liệu cũ (nếu có) sang IndexedDB
@@ -4516,6 +4976,7 @@
             await loadCompanyProfile();        // logo + thông tin công ty đã lưu (nếu có)
             renderLogoDisplay();
         } catch (err) { /* bỏ qua */ }
+        try { await restoreAutosaves(); } catch (err) { _autosaveReady = true; }
         try {
             await updateSavedListBadge();
         } catch (err) { /* bỏ qua */ }
@@ -4523,7 +4984,7 @@
         try { await cleanupOldArchiveRecords(); } catch (err) { /* bỏ qua */ }
         try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (err) { /* bỏ qua */ }
         // Tải sẵn thư viện tạo PDF khi có mạng để lần xuất PDF sau (kể cả mất sóng) vẫn chạy
-        setTimeout(function () { if (navigator.onLine) loadPdfLibs().catch(function () { }); }, 3000);
+        setTimeout(function () { if (navigator.onLine) loadPdfLibs().then(function () { return loadDocxLib(); }).catch(function () { }); }, 3000);
     })();
 
     // Lắng nghe trên toàn trang (không chỉ trong <form>) để không bỏ sót các trường
@@ -4533,9 +4994,7 @@
         if (!target) return;
         const pane = target.closest ? target.closest('.tab-pane') : null;
         if (!pane) { return; }
-        if (pane.id === 'tab-khaosat') { return; }
-        const tabKey = pane.id.replace('tab-', '');
-        // Archive rendering handled by showTab
+        markDirty(autosaveKindOf(target));
     }
     document.addEventListener('input', function(e) {
         if (!e.target || e.target.tagName === 'CANVAS') return;
@@ -4651,16 +5110,21 @@
 
     // Override installApp() với UX tốt hơn
     function installApp() {
-        showInstallGuideModal();
-
-        // Nếu deferredInstallPrompt tồn tại, gọi prompt sau 1 giây
+        // Android/Chrome: hộp thoại cài phải gọi NGAY trong lần bấm (không được trễ)
         if (deferredInstallPrompt) {
-            setTimeout(() => {
-                deferredInstallPrompt.prompt().catch(err => {
-                    console.log('Install prompt error:', err);
-                });
-            }, 1000);
+            const ev = deferredInstallPrompt;
+            deferredInstallPrompt = null;
+            try {
+                ev.prompt();
+                ev.userChoice.then(function (c) {
+                    const btn = document.getElementById('installAppBtn');
+                    if (c && c.outcome === 'accepted' && btn) btn.style.display = 'none';
+                }).catch(function () { });
+            } catch (err) { showInstallGuideModal(); }
+            return;
         }
+        // iPhone hoặc trình duyệt không hỗ trợ: hiện hướng dẫn thêm vào màn hình chính
+        showInstallGuideModal();
     }
 
     // ========== SERVICE WORKER REGISTRATION & AUTO-UPDATE CHECKING ==========
@@ -4915,38 +5379,25 @@
         const companyName = localStorage.getItem('companyName') || 'Ngọc Long Solar';
         const message = `Cài đặt ứng dụng Khảo Sát ĐMT của ${companyName}:\n${shareLink}`;
 
-        // Cách 1: Web Share API (hỗ trợ Android, iPhone)
+        // Cách 1: bảng chia sẻ của điện thoại (chọn Zalo trong danh sách)
         if (navigator.share) {
-            navigator.share({
-                title: 'Ứng Dụng Khảo Sát ĐMT',
-                text: message,
-                url: shareLink
-            }).catch(err => {
-                console.log('Share failed:', err);
-                // Fallback: Zalo deeplink
-                openZaloShare(message, shareLink);
+            navigator.share({ title: 'Ứng dụng NL Office', text: message, url: shareLink }).catch(function (err) {
+                if (err && err.name === 'AbortError') return;   // người dùng tự hủy
+                copyShareLink(message);
             });
         } else {
-            // Fallback: Zalo deeplink
-            openZaloShare(message, shareLink);
+            copyShareLink(message);
         }
     }
 
-    function openZaloShare(message, link) {
-        const encodedMessage = encodeURIComponent(message);
-        const encodedLink = encodeURIComponent(link);
-
-        // Zalo deeplink (khi cài Zalo)
-        const zaloUrl = `https://zalo.me/?text=${encodedMessage}&url=${encodedLink}`;
-
-        // Nếu không có Zalo, mở link web
-        if (typeof window !== 'undefined') {
-            // Thử mở Zalo app
-            window.open(`zalo://open`, '_blank');
-            // Sau đó mở web link
-            setTimeout(() => {
-                window.open(zaloUrl, '_blank');
-            }, 500);
+    // Dự phòng: chép link vào bộ nhớ tạm để dán vào Zalo
+    function copyShareLink(message) {
+        const done = function () { showToast('✅ Đã chép link. Mở Zalo và dán vào tin nhắn để gửi.', 'success'); };
+        const manual = function () { window.prompt('Chép link dưới đây rồi dán vào Zalo:', message); };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(message).then(done, manual);
+        } else {
+            manual();
         }
     }
 
@@ -5007,7 +5458,8 @@
 
     // ========== WELCOME SCREEN & MODULE SELECTION ==========
 
-    function backToHome() {
+    function backToHome(fromHistory) {
+        if (!fromHistory && history.state && history.state.nlModule) { history.back(); return; }
         // Ẩn main container
         document.getElementById('mainContainer').style.display = 'none';
         // Hiện welcome screen
@@ -5022,7 +5474,16 @@
         document.getElementById('mainContainer').style.display = 'block';
         // Chuyển sang tab đã chọn
         showTab(moduleName);
+        // Để nút Back của điện thoại quay về màn hình chính thay vì thoát app
+        try { if (!(history.state && history.state.nlModule)) history.pushState({ nlModule: moduleName }, ''); } catch (e) { }
     }
+    window.addEventListener('popstate', function () {
+        const mc = document.getElementById('mainContainer');
+        if (mc && mc.style.display !== 'none') backToHome(true);
+        if (document.getElementById('pdfReadyModal')) pdfCloseReady();
+        const pm = document.getElementById('previewModal'); if (pm && pm.style.display !== 'none') closePreview();
+        const cm = document.getElementById('cameraModal'); if (cm && cm.classList.contains('show')) closeCameraModal();
+    });
 
     // Make startModule global and wrap with loadCompanySettings
     window.startModule = startModule;
@@ -5039,7 +5500,7 @@
 
     // ========== CAMERA FUNCTIONALITY ==========
     let cameraStream = null;
-    let currentCameraDevice = 'user'; // 'user' = front, 'environment' = back
+    let currentCameraDevice = 'environment'; // mặc định camera sau (chụp công trình)
     let currentInputId = '';
     let currentPreviewContainerId = '';
 
@@ -5050,10 +5511,11 @@
         const modal = document.getElementById('cameraModal');
         modal.classList.add('show');
 
-        // Khởi tạo camera
-        if (!cameraStream) {
-            startCamera();
-        }
+        // Khởi tạo camera mới mỗi lần mở (xóa khung hình cũ để không chụp nhầm)
+        const v = document.getElementById('cameraVideo');
+        if (v) v.srcObject = null;
+        stopCamera();
+        startCamera();
     }
 
     function closeCameraModal() {
@@ -5062,22 +5524,47 @@
         stopCamera();
     }
 
+    function cameraMessage(msg) {
+        const m = document.getElementById('cameraMsg');
+        if (!m) return;
+        m.textContent = msg || '';
+        m.style.display = msg ? 'block' : 'none';
+    }
+
     async function startCamera() {
+        cameraMessage('');
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            cameraMessage('Trình duyệt không mở được camera trong ứng dụng (cần mở bằng https). Bấm "Camera máy" để chụp bằng camera của điện thoại.');
+            return;
+        }
         try {
             const constraints = {
-                video: {
-                    facingMode: currentCameraDevice
-                }
+                audio: false,
+                video: { facingMode: { ideal: currentCameraDevice }, width: { ideal: 1920 }, height: { ideal: 1080 } }
             };
-
             cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
             const video = document.getElementById('cameraVideo');
+            video.muted = true;
             video.srcObject = cameraStream;
+            try { await video.play(); } catch (e) { /* iOS tự phát khi có playsinline */ }
         } catch (err) {
-            console.error('Camera error:', err);
-            alert('⚠️ Không thể truy cập camera.\n\nVui lòng kiểm tra:\n• Quyền truy cập camera (Settings)\n• Browser hỗ trợ camera\n• Kết nối HTTPS');
-            closeCameraModal();
+            console.log('Camera error:', err);
+            cameraStream = null;
+            const denied = err && (err.name === 'NotAllowedError' || err.name === 'SecurityError');
+            cameraMessage((denied
+                ? 'Chưa được cấp quyền camera. Vào Cài đặt điện thoại → trình duyệt/ứng dụng → Camera → Cho phép. '
+                : 'Không mở được camera. ') + 'Hoặc bấm "Camera máy" bên dưới để chụp bằng camera của điện thoại.');
         }
+    }
+
+    // Dự phòng chắc chắn nhất trên điện thoại: mở thẳng ứng dụng camera của máy
+    function useNativeCamera() {
+        const el = document.getElementById(currentInputId);
+        if (!el) return;
+        closeCameraModal();
+        el.setAttribute('capture', 'environment');
+        el.click();
+        setTimeout(function () { el.removeAttribute('capture'); }, 1500);
     }
 
     function stopCamera() {
@@ -5085,6 +5572,8 @@
             cameraStream.getTracks().forEach(track => track.stop());
             cameraStream = null;
         }
+        const v = document.getElementById('cameraVideo');
+        if (v) v.srcObject = null;
     }
 
     async function switchCamera() {
@@ -5095,6 +5584,7 @@
 
     function capturePhoto() {
         const video = document.getElementById('cameraVideo');
+        if (!cameraStream || !video.videoWidth || video.readyState < 2) { showToast('Camera chưa sẵn sàng, thử lại sau 1 giây', 'warning'); return; }
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
@@ -5104,26 +5594,16 @@
 
         // Convert canvas to blob
         canvas.toBlob(blob => {
-            const file = new File([blob], `photo_${Date.now()}.jpg`, { type: 'image/jpeg' });
-
-            // Add to file input (for handleImageUpload)
             const inputElement = document.getElementById(currentInputId);
-            const dataTransfer = new DataTransfer();
-
-            // Keep existing files
-            if (inputElement.files && inputElement.files.length > 0) {
-                for (let i = 0; i < inputElement.files.length; i++) {
-                    dataTransfer.items.add(inputElement.files[i]);
-                }
-            }
-
-            // Add new photo
-            dataTransfer.items.add(file);
-            inputElement.files = dataTransfer.files;
-
-            // Trigger change event
-            const event = new Event('change', { bubbles: true });
-            inputElement.dispatchEvent(event);
+            if (!inputElement || !blob) return;
+            let file;
+            try { file = new File([blob], `photo_${Date.now()}.jpg`, { type: 'image/jpeg' }); }
+            catch (e) { file = blob; file.name = `photo_${Date.now()}.jpg`; }
+            // Gọi đúng hàm xử lý ảnh của ô này (giống như chọn ảnh từ thư viện)
+            const handlerCode = inputElement.getAttribute('onchange') || '';
+            const fakeEvent = { target: { files: [file], value: '' } };
+            try { new Function('event', handlerCode).call(inputElement, fakeEvent); }
+            catch (err) { console.log('Lỗi thêm ảnh chụp:', err); alert('Không thêm được ảnh vừa chụp: ' + err.message); return; }
 
             // Visual feedback
             showToast('✅ Ảnh đã được chụp!', 'success');
@@ -5191,87 +5671,6 @@
     function closeCameraPermissionGuide() {
         const modal = document.getElementById('cameraPermissionModal');
         if (modal) modal.classList.remove('active');
-    }
-
-    // Archive functions
-    let archiveRecords = [];
-
-
-
-
-
-    function deleteFromArchive(recordId) {
-        if (!window.db) return;
-        window.db.transaction(['archive'], 'readwrite').objectStore('archive').delete(recordId);
-        loadArchiveFromIndexedDB();
-    }
-
-    function renderArchiveList() {
-        const container = document.getElementById('archive-list');
-        if (!container) return;
-
-        const sorted = [...archiveRecords].sort((a, b) => b.timestamp - a.timestamp);
-
-        if (sorted.length === 0) {
-            container.innerHTML = '<div class="archive-empty">Chưa có phiếu nào được lưu trữ</div>';
-            return;
-        }
-
-        let html = '';
-        sorted.forEach(record => {
-            html += `<div class="archive-item">
-                <div class="archive-item-info">
-                    <div class="item-date">${record.date}</div>
-                    <div class="item-meta">
-                        <span>${record.module}</span> |
-                        <span>${record.company}</span> |
-                        <span>${record.type}</span>
-                    </div>
-                </div>
-                <div class="item-buttons">
-                    ${record.pdfUrl ? `<a href="${record.pdfUrl}" target="_blank" class="btn btn-sm btn-outline-primary" download><i class="fa-solid fa-download"></i> PDF</a>` : ''}
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteFromArchive(${record.id})"><i class="fa-solid fa-trash"></i> Xóa</button>
-                </div>
-            </div>`;
-        });
-
-        container.innerHTML = html;
-    }
-
-    // Auto-delete archive records older than 1 year
-
-
-    function shareViaPdfWithArchive(tabKey, pdfBlob, pdfUrl) {
-        const cfg = TAB_CONFIG[tabKey];
-        const device = detectDevice();
-
-        // Save to archive
-        const archiveData = {
-            module: cfg.title,
-            company: document.getElementById(cfg.custField)?.value || 'N/A',
-            type: 'Phiếu',
-            pdfUrl: pdfUrl
-        };
-        saveToArchive(archiveData);
-
-        // Try Web Share API first
-        if (navigator.share && !device.isIOS) {
-            navigator.share({
-                title: cfg.title,
-                text: 'Phiếu ' + cfg.code,
-                files: [new File([pdfBlob], cfg.code + '.pdf', { type: 'application/pdf' })]
-            }).then(() => console.log('Shared successfully'))
-              .catch(err => console.log('Share failed:', err));
-        }
-        // Fallback: Zalo deeplink
-        else if (device.isAndroid) {
-            const zaloDeeplink = 'zalo://qr?id=' + encodeURIComponent(pdfUrl);
-            window.open(zaloDeeplink, '_blank');
-        }
-        // iOS: show PWA guide
-        else if (device.isIOS) {
-            showIOSPwaGuide();
-        }
     }
 
     // Setup archive tab (initialized automatically via showTab)

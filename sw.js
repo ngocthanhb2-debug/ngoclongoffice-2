@@ -10,7 +10,7 @@
  */
 
 const CACHE_NAME = 'nl-office-v3';
-const CDN_HOSTS = ['cdn.jsdelivr.net', 'cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
+const CDN_HOSTS = ['cdn.jsdelivr.net', 'cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com', 'unpkg.com'];
 const INDEX_URL = new URL('./khao_sat_dmt.html', self.registration.scope).href;
 const NAV_TIMEOUT_MS = 4000;   // mạng yếu: quá 4 giây thì mở ngay bản đã lưu
 const UPDATE_CHECK_INTERVAL = 3600000; // 1 giờ (ms)
