@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Khảo Sát Hệ Thống Điện Năng Lượng Mặt Trời</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -35,6 +35,8 @@
         body {
             background: linear-gradient(180deg, #eaf1fb 0%, #f4f7fb 260px, #f4f7fb 100%);
             min-height: 100vh;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             color: #1e2a3a;
         }
@@ -153,12 +155,14 @@
         /* ========== WELCOME SCREEN ========== */
         #welcomeScreen {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            justify-content: flex-start;   /* không căn giữa cứng: nội dung dài vẫn cuộn được từ đầu */
             background: linear-gradient(135deg, var(--brand-blue) 0%, #1e5c96 100%);
             color: white;
-            padding: 20px;
+            /* chừa chỗ cho thanh trạng thái / tai thỏ iPhone */
+            padding: max(20px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+            -webkit-overflow-scrolling: touch;
             text-align: center;
             position: fixed;
             top: 0;
@@ -169,7 +173,9 @@
             overflow-y: auto;
         }
         .welcome-container {
+            width: 100%;
             max-width: 600px;
+            margin: auto 0;   /* căn giữa khi đủ chỗ, tự bắt đầu từ trên khi màn hình thấp */
         }
         .welcome-logo {
             font-size: 4rem;
@@ -178,7 +184,7 @@
         }
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+            50% { transform: translateY(-8px); }
         }
         .welcome-title {
             font-size: 2.2rem;
@@ -225,6 +231,14 @@
         }
         @media (min-width: 600px) {
             .welcome-modules { grid-template-columns: repeat(4, 1fr); }
+        }
+        @media (max-width: 600px), (max-height: 700px) {
+            .welcome-logo { font-size: 3rem; margin-bottom: 6px; }
+            .welcome-title { font-size: 1.8rem; margin-bottom: 4px; }
+            .welcome-subtitle { font-size: 0.95rem; margin-bottom: 16px; line-height: 1.45; }
+            .welcome-modules { gap: 10px; }
+            .welcome-module-btn { padding: 11px 8px; gap: 4px; }
+            .welcome-module-icon { font-size: 1.6rem !important; }
         }
         .welcome-module-btn {
             background: rgba(255, 255, 255, 0.15);
@@ -5476,7 +5490,8 @@
         // Ẩn main container
         document.getElementById('mainContainer').style.display = 'none';
         // Hiện welcome screen
-        document.getElementById('welcomeScreen').style.display = 'block';
+        document.getElementById('welcomeScreen').style.display = '';
+        document.getElementById('welcomeScreen').scrollTop = 0;
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
